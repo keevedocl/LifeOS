@@ -12,6 +12,7 @@
 </head>
 
 <body>
+
 <div class="app">
 
   <header class="topbar">
@@ -26,12 +27,10 @@
 
   <main>
 
-    <!-- =========================
-         INICIO
-    ========================== -->
     <section class="screen active" id="homeScreen">
 
       <div class="hero">
+
         <div class="hero-copy">
           <span class="mini">TU PROGRESO</span>
 
@@ -51,6 +50,7 @@
         </div>
 
         <div class="hero-orb">✦</div>
+
       </div>
 
 
@@ -84,6 +84,7 @@
 
 
       <div class="section-title">
+
         <div>
           <span class="mini">A CONTINUACIÓN</span>
           <h2>Tu día</h2>
@@ -92,18 +93,21 @@
         <button class="link" data-screen="scheduleScreen">
           Ver horario
         </button>
+
       </div>
 
       <div id="nextClass"></div>
 
 
       <div class="section-title">
+
         <div>
           <span class="mini">MISIONES</span>
           <h2>Objetivos de hoy</h2>
         </div>
 
         <button class="round" id="newTask">+</button>
+
       </div>
 
       <div id="homeTasks" class="list"></div>
@@ -111,9 +115,6 @@
     </section>
 
 
-    <!-- =========================
-         HORARIO
-    ========================== -->
     <section class="screen" id="scheduleScreen">
 
       <div class="screen-head">
@@ -124,13 +125,8 @@
         </div>
 
         <div class="actions">
-          <button class="soft" id="pdfBtn">
-            PDF
-          </button>
-
-          <button class="primary" id="newClass">
-            + Clase
-          </button>
+          <button class="soft" id="pdfBtn">PDF</button>
+          <button class="primary" id="newClass">+ Clase</button>
         </div>
 
       </div>
@@ -142,9 +138,6 @@
     </section>
 
 
-    <!-- =========================
-         OBJETIVOS
-    ========================== -->
     <section class="screen" id="tasksScreen">
 
       <div class="screen-head">
@@ -159,7 +152,6 @@
         </button>
 
       </div>
-
 
       <div class="filters">
 
@@ -177,15 +169,11 @@
 
       </div>
 
-
       <div id="tasksList" class="list"></div>
 
     </section>
 
 
-    <!-- =========================
-         ENFOQUE
-    ========================== -->
     <section class="screen" id="focusScreen">
 
       <div class="focus-head">
@@ -207,10 +195,7 @@
 
           <div>
             <strong id="timer">25:00</strong>
-
-            <small id="timerState">
-              Listo para empezar
-            </small>
+            <small id="timerState">Listo para empezar</small>
           </div>
 
         </div>
@@ -277,9 +262,6 @@
     </section>
 
 
-    <!-- =========================
-         STORE
-    ========================== -->
     <section class="screen" id="storeScreen">
 
       <div class="screen-head">
@@ -293,31 +275,27 @@
 
 
       <div class="balance">
+
         <span>Tu XP disponible</span>
-        <b id="storeXP">0 XP</b>
+
+        <b id="storeXP">
+          0 XP
+        </b>
+
       </div>
 
 
       <div class="store-tabs">
 
-        <button
-          class="store-tab active"
-          data-store="themes"
-        >
+        <button class="store-tab active" data-store="themes">
           Temas
         </button>
 
-        <button
-          class="store-tab"
-          data-store="effects"
-        >
+        <button class="store-tab" data-store="effects">
           Efectos
         </button>
 
-        <button
-          class="store-tab"
-          data-store="avatars"
-        >
+        <button class="store-tab" data-store="avatars">
           Avatares
         </button>
 
@@ -329,9 +307,6 @@
     </section>
 
 
-    <!-- =========================
-         CONFIGURACIÓN
-    ========================== -->
     <section class="screen" id="settingsScreen">
 
       <div class="screen-head">
@@ -347,10 +322,12 @@
       <div class="settings-list">
 
 
-        <!-- PERFIL -->
         <div class="setting-group">
 
-          <span class="mini">PERFIL</span>
+          <span class="mini">
+            PERFIL
+          </span>
+
 
           <label>
             Nombre
@@ -375,10 +352,11 @@
         </div>
 
 
-        <!-- NOTIFICACIONES -->
         <div class="setting-group">
 
-          <span class="mini">NOTIFICACIONES</span>
+          <span class="mini">
+            NOTIFICACIONES
+          </span>
 
 
           <label class="row-setting">
@@ -438,10 +416,11 @@
         </div>
 
 
-        <!-- APARIENCIA -->
         <div class="setting-group">
 
-          <span class="mini">APARIENCIA</span>
+          <span class="mini">
+            APARIENCIA
+          </span>
 
 
           <label>
@@ -481,10 +460,11 @@
         </div>
 
 
-        <!-- DATOS -->
         <div class="setting-group">
 
-          <span class="mini">DATOS</span>
+          <span class="mini">
+            DATOS
+          </span>
 
 
           <button
@@ -525,9 +505,6 @@
   </main>
 
 
-  <!-- =========================
-       NAVEGACIÓN
-  ========================== -->
   <nav class="nav">
 
     <button
@@ -579,9 +556,6 @@
 </div>
 
 
-<!-- =========================
-     MODAL
-========================== -->
 <div
   class="modal hidden"
   id="modal"
@@ -606,24 +580,23 @@
 </div>
 
 
-<!-- =========================
-     TOAST
-========================== -->
 <div
   class="toast"
   id="toast"
 ></div>
 
 
-<!-- =========================
+<!-- =====================================================
      SUPABASE
-========================== -->
+     ===================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
-<!-- =========================
+<!-- =====================================================
      LIFEOS
-========================== -->
+     ===================================================== -->
+
 <script src="storage.js"></script>
 <script src="xp.js"></script>
 <script src="schedule.js"></script>
@@ -632,38 +605,14 @@
 <script src="app.js"></script>
 
 
-<!-- =========================
-     SERVICE WORKER
-========================== -->
 <script>
-
-if ("serviceWorker" in navigator) {
-
-  window.addEventListener("load", async () => {
-
-    try {
-
-      const registration =
-        await navigator.serviceWorker.register("./sw.js");
-
-      console.log(
-        "LifeOS Service Worker registrado:",
-        registration.scope
-      );
-
-    } catch (error) {
-
-      console.error(
-        "Error registrando Service Worker:",
-        error
-      );
-
-    }
-
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker
+      .register("sw.js")
+      .catch(console.error);
   });
-
 }
-
 </script>
 
 </body>
