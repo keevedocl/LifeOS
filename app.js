@@ -1,27 +1,144 @@
-let selectedDay=LifeOS.dayIndex(),taskFilter="all",focusMinutes=25,timerLeft=1500,timerRunning=false,timerInterval=null;
+/* =========================================================
+   LIFEOS APP
+   ========================================================= */
 
-const THEMES=[
-{id:"midnight",name:"Midnight",rarity:"GRATIS",cost:0,emoji:"🌙",bg:"linear-gradient(135deg,#211b35,#7357e8)"},
-{id:"lavender",name:"Lavender",rarity:"COMÚN",cost:500,emoji:"🌸",bg:"linear-gradient(135deg,#e8dcff,#a78cff)"},
-{id:"ocean",name:"Ocean",rarity:"RARO",cost:1500,emoji:"🌊",bg:"linear-gradient(135deg,#d8f2ff,#4da7d9)"},
-{id:"forest",name:"Forest",rarity:"RARO",cost:2000,emoji:"🌿",bg:"linear-gradient(135deg,#d9f4e4,#49ae79)"},
-{id:"sunset",name:"Sunset",rarity:"ÉPICO",cost:3500,emoji:"🌅",bg:"linear-gradient(135deg,#ffd9cf,#ef7c68)"},
-{id:"cosmos",name:"Cosmos",rarity:"ÉPICO",cost:5000,emoji:"🪐",bg:"linear-gradient(135deg,#201637,#5d4bd7)"},
-{id:"aurora",name:"Aurora",rarity:"LEGENDARIO",cost:8000,emoji:"✨",bg:"linear-gradient(135deg,#102b31,#64d9b0)"},
-{id:"glass",name:"Glass",rarity:"LEGENDARIO",cost:10000,emoji:"💎",bg:"linear-gradient(135deg,#edf5ff,#8db6e8)"}
+let selectedDay = 0;
+let taskFilter = "all";
+let focusMinutes = 25;
+let timerLeft = 1500;
+let timerRunning = false;
+let timerInterval = null;
+
+
+/* =========================================================
+   TIENDA
+   ========================================================= */
+
+const THEMES = [
+  {
+    id:"midnight",
+    name:"Midnight",
+    rarity:"GRATIS",
+    cost:0,
+    emoji:"🌙",
+    bg:"linear-gradient(135deg,#211b35,#7357e8)"
+  },
+  {
+    id:"lavender",
+    name:"Lavender",
+    rarity:"COMÚN",
+    cost:500,
+    emoji:"🌸",
+    bg:"linear-gradient(135deg,#e8dcff,#a78cff)"
+  },
+  {
+    id:"ocean",
+    name:"Ocean",
+    rarity:"RARO",
+    cost:1500,
+    emoji:"🌊",
+    bg:"linear-gradient(135deg,#d8f2ff,#4da7d9)"
+  },
+  {
+    id:"forest",
+    name:"Forest",
+    rarity:"RARO",
+    cost:2000,
+    emoji:"🌿",
+    bg:"linear-gradient(135deg,#d9f4e4,#49ae79)"
+  },
+  {
+    id:"sunset",
+    name:"Sunset",
+    rarity:"ÉPICO",
+    cost:3500,
+    emoji:"🌅",
+    bg:"linear-gradient(135deg,#ffd9cf,#ef7c68)"
+  },
+  {
+    id:"cosmos",
+    name:"Cosmos",
+    rarity:"ÉPICO",
+    cost:5000,
+    emoji:"🪐",
+    bg:"linear-gradient(135deg,#201637,#5d4bd7)"
+  },
+  {
+    id:"aurora",
+    name:"Aurora",
+    rarity:"LEGENDARIO",
+    cost:8000,
+    emoji:"✨",
+    bg:"linear-gradient(135deg,#102b31,#64d9b0)"
+  },
+  {
+    id:"glass",
+    name:"Glass",
+    rarity:"LEGENDARIO",
+    cost:10000,
+    emoji:"💎",
+    bg:"linear-gradient(135deg,#edf5ff,#8db6e8)"
+  }
 ];
 
-const EFFECTS=[
-{id:"spark",name:"XP Spark",rarity:"COMÚN",cost:700,emoji:"✨",desc:"Efecto especial al ganar XP."},
-{id:"confetti",name:"Level Confetti",rarity:"ÉPICO",cost:2500,emoji:"🎉",desc:"Confeti al subir de nivel."},
-{id:"glow",name:"Focus Glow",rarity:"ÉPICO",cost:3500,emoji:"💫",desc:"Efecto visual al completar enfoque."}
+
+const EFFECTS = [
+  {
+    id:"spark",
+    name:"XP Spark",
+    rarity:"COMÚN",
+    cost:700,
+    emoji:"✨",
+    desc:"Efecto especial al ganar XP."
+  },
+  {
+    id:"confetti",
+    name:"Level Confetti",
+    rarity:"ÉPICO",
+    cost:2500,
+    emoji:"🎉",
+    desc:"Confeti al subir de nivel."
+  },
+  {
+    id:"glow",
+    name:"Focus Glow",
+    rarity:"ÉPICO",
+    cost:3500,
+    emoji:"💫",
+    desc:"Efecto visual al completar enfoque."
+  }
 ];
 
-const AVATARS=[
-{id:"moon",name:"Moon",rarity:"COMÚN",cost:400,emoji:"🌙"},
-{id:"fox",name:"Fox",rarity:"RARO",cost:1200,emoji:"🦊"},
-{id:"robot",name:"Orbit",rarity:"ÉPICO",cost:3000,emoji:"🤖"},
-{id:"crown",name:"Crown",rarity:"LEGENDARIO",cost:6000,emoji:"👑"}
+
+const AVATARS = [
+  {
+    id:"moon",
+    name:"Moon",
+    rarity:"COMÚN",
+    cost:400,
+    emoji:"🌙"
+  },
+  {
+    id:"fox",
+    name:"Fox",
+    rarity:"RARO",
+    cost:1200,
+    emoji:"🦊"
+  },
+  {
+    id:"robot",
+    name:"Orbit",
+    rarity:"ÉPICO",
+    cost:3000,
+    emoji:"🤖"
+  },
+  {
+    id:"crown",
+    name:"Crown",
+    rarity:"LEGENDARIO",
+    cost:6000,
+    emoji:"👑"
+  }
 ];
 
 
@@ -29,27 +146,49 @@ const AVATARS=[
    SUPABASE
    ========================================================= */
 
-const SUPABASE_URL="https://wqfsgzpgshdvyjsnmqds.supabase.co";
+const SUPABASE_URL =
+  "https://wqfsgzpgshdvyjsnmqds.supabase.co";
 
-const SUPABASE_ANON_KEY="BIb4lQOoZdclzLLiryHnCCvhNaiSwLtcZSjnGHdADqUsdaNPv0_MkX6nfEjs8Ogo5P_Ya47v3XYDTYeQpb50He0";
+const SUPABASE_ANON_KEY =
+  "BIb4lQOoZdclzLLiryHnCCvhNaiSwLtcZSjnGHdADqUsdaNPv0_MkX6nfEjs8Ogo5P_Ya47v3XYDTYeQpb50He0";
 
-let supabaseClient=null;
+let supabaseClient = null;
+
 
 function initSupabase(){
 
-  if(
-    typeof window.supabase!=="undefined" &&
-    SUPABASE_ANON_KEY
-  ){
+  try{
 
-    supabaseClient=
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
+    if(
+      window.supabase &&
+      typeof window.supabase.createClient === "function"
+    ){
+
+      supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
+
+      console.log("Supabase conectado.");
+
+    }else{
+
+      console.warn(
+        "Supabase JS no está disponible."
       );
 
-  }
+    }
 
+  }catch(error){
+
+    console.error(
+      "Error iniciando Supabase:",
+      error
+    );
+
+    supabaseClient = null;
+  }
 }
 
 
@@ -57,36 +196,162 @@ function initSupabase(){
    INICIO
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded",async ()=>{
+document.addEventListener(
+  "DOMContentLoaded",
+  async function(){
 
-  initSupabase();
+    console.log("LifeOS iniciando...");
 
-  updateStreak();
+    /*
+     * LifeOS ya debería existir porque storage.js
+     * se carga antes de app.js.
+     */
 
-  bind();
+    if(!window.LifeOS){
 
-  applyTheme();
+      console.error(
+        "ERROR: storage.js no cargó correctamente."
+      );
 
-  render();
-
-  if(window.LifeOSNotifications){
-
-    LifeOSNotifications.updateNotificationStatus();
-
-    if(
-      "Notification" in window &&
-      Notification.permission==="granted"
-    ){
-
-      LifeOSNotifications.startNotifications();
-
+      return;
     }
 
+
+    /*
+     * Día inicial.
+     */
+
+    try{
+
+      selectedDay = LifeOS.dayIndex();
+
+    }catch(error){
+
+      console.error(
+        "Error obteniendo día:",
+        error
+      );
+
+      selectedDay = 0;
+    }
+
+
+    /*
+     * Supabase NO debe bloquear LifeOS.
+     */
+
+    initSupabase();
+
+
+    /*
+     * Eventos.
+     */
+
+    bind();
+
+
+    /*
+     * Streak.
+     */
+
+    try{
+
+      if(typeof updateStreak === "function")
+        updateStreak();
+
+    }catch(error){
+
+      console.error(
+        "Error actualizando streak:",
+        error
+      );
+    }
+
+
+    /*
+     * Tema.
+     */
+
+    try{
+
+      applyTheme();
+
+    }catch(error){
+
+      console.error(
+        "Error aplicando tema:",
+        error
+      );
+    }
+
+
+    /*
+     * Render.
+     */
+
+    try{
+
+      render();
+
+    }catch(error){
+
+      console.error(
+        "Error renderizando LifeOS:",
+        error
+      );
+    }
+
+
+    /*
+     * Notificaciones.
+     */
+
+    try{
+
+      if(window.LifeOSNotifications){
+
+        LifeOSNotifications.updateNotificationStatus();
+
+        if(
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ){
+
+          LifeOSNotifications.startNotifications();
+
+        }
+      }
+
+    }catch(error){
+
+      console.error(
+        "Error con notificaciones:",
+        error
+      );
+    }
+
+
+    /*
+     * Cargar clases desde Supabase.
+     */
+
+    try{
+
+      await loadClassesFromSupabase();
+
+    }catch(error){
+
+      console.error(
+        "Error cargando clases:",
+        error
+      );
+    }
+
+
+    console.log("LifeOS iniciado correctamente.");
+
   }
-
-  await loadClassesFromSupabase();
-
-});
+);
 
 
 /* =========================================================
@@ -95,102 +360,350 @@ document.addEventListener("DOMContentLoaded",async ()=>{
 
 function bind(){
 
+  console.log("Conectando botones...");
+
+
+  /*
+   * NAVEGACIÓN
+   */
+
   document.querySelectorAll("[data-screen]").forEach(
-    b=>b.onclick=()=>showScreen(b.dataset.screen)
+    button => {
+
+      button.onclick = function(){
+
+        showScreen(
+          button.dataset.screen
+        );
+
+      };
+
+    }
   );
 
 
-  document.getElementById("settingsBtn").onclick=()=>{
-    showScreen("settingsScreen");
-  };
+  /*
+   * CONFIGURACIÓN
+   */
+
+  const settingsBtn =
+    document.getElementById("settingsBtn");
+
+  if(settingsBtn){
+
+    settingsBtn.onclick = function(){
+
+      showScreen("settingsScreen");
+
+    };
+
+  }
 
 
-  document.getElementById("newClass").onclick=()=>{
-    openModal("Nueva clase",classForm());
-  };
+  /*
+   * NUEVA CLASE
+   */
 
+  const newClass =
+    document.getElementById("newClass");
 
-  document.getElementById("newTask").onclick=
-  document.getElementById("newTask2").onclick=()=>{
-    openModal("Nuevo objetivo",taskForm());
-  };
+  if(newClass){
 
+    newClass.onclick = function(){
 
-  document.getElementById("pdfBtn").onclick=exportPDF;
+      if(typeof classForm !== "function"){
 
+        toast("Error: classForm no está disponible.");
 
-  document.getElementById("closeModal").onclick=closeModal;
+        console.error(
+          "classForm() no existe."
+        );
 
+        return;
+      }
 
-  document.getElementById("notifyBtn").onclick=requestNotifications;
-
-
-  document.getElementById("saveSettings").onclick=saveSettings;
-
-
-  document.getElementById("resetBtn").onclick=()=>{
-
-    if(confirm("¿Borrar todos los datos?")){
-
-      LifeOS.reset();
-
-      render();
-
-      toast("LifeOS restablecido");
-
-    }
-
-  };
-
-
-  document.querySelectorAll("[data-filter]").forEach(
-    b=>b.onclick=()=>{
-
-      taskFilter=b.dataset.filter;
-
-      document.querySelectorAll("[data-filter]").forEach(
-        x=>x.classList.toggle("active",x===b)
+      openModal(
+        "Nueva clase",
+        classForm()
       );
 
-      renderTasks();
+    };
 
-    }
-  );
+  }
 
 
-  document.querySelectorAll(".duration").forEach(
-    b=>b.onclick=()=>{
+  /*
+   * NUEVA TAREA
+   */
 
-      if(timerRunning)return;
+  const newTask =
+    document.getElementById("newTask");
 
-      focusMinutes=+b.dataset.min;
+  const newTask2 =
+    document.getElementById("newTask2");
 
-      timerLeft=focusMinutes*60;
 
-      document.querySelectorAll(".duration").forEach(
-        x=>x.classList.toggle("active",x===b)
+  const createTask = function(){
+
+    if(typeof taskForm !== "function"){
+
+      toast("Error: taskForm no está disponible.");
+
+      console.error(
+        "taskForm() no existe."
       );
 
-      updateTimer();
+      return;
+    }
+
+    openModal(
+      "Nuevo objetivo",
+      taskForm()
+    );
+
+  };
+
+
+  if(newTask)
+    newTask.onclick = createTask;
+
+  if(newTask2)
+    newTask2.onclick = createTask;
+
+
+  /*
+   * PDF
+   */
+
+  const pdfBtn =
+    document.getElementById("pdfBtn");
+
+  if(pdfBtn){
+
+    pdfBtn.onclick = function(){
+
+      if(typeof exportPDF === "function"){
+
+        exportPDF();
+
+      }else{
+
+        toast("La función PDF no está disponible.");
+
+        console.error(
+          "exportPDF() no existe."
+        );
+
+      }
+
+    };
+
+  }
+
+
+  /*
+   * MODAL
+   */
+
+  const closeModalBtn =
+    document.getElementById("closeModal");
+
+  if(closeModalBtn){
+
+    closeModalBtn.onclick =
+      closeModal;
+
+  }
+
+
+  /*
+   * NOTIFICACIONES
+   */
+
+  const notifyBtn =
+    document.getElementById("notifyBtn");
+
+  if(notifyBtn){
+
+    notifyBtn.onclick =
+      requestNotifications;
+
+  }
+
+
+  /*
+   * GUARDAR CONFIGURACIÓN
+   */
+
+  const saveSettingsBtn =
+    document.getElementById("saveSettings");
+
+  if(saveSettingsBtn){
+
+    saveSettingsBtn.onclick =
+      saveSettings;
+
+  }
+
+
+  /*
+   * RESET
+   */
+
+  const resetBtn =
+    document.getElementById("resetBtn");
+
+  if(resetBtn){
+
+    resetBtn.onclick = function(){
+
+      if(
+        confirm(
+          "¿Borrar todos los datos de LifeOS?"
+        )
+      ){
+
+        LifeOS.reset();
+
+        render();
+
+        toast(
+          "LifeOS restablecido"
+        );
+
+      }
+
+    };
+
+  }
+
+
+  /*
+   * FILTROS
+   */
+
+  document.querySelectorAll(
+    "[data-filter]"
+  ).forEach(
+    button => {
+
+      button.onclick = function(){
+
+        taskFilter =
+          button.dataset.filter;
+
+
+        document.querySelectorAll(
+          "[data-filter]"
+        ).forEach(
+          x =>
+            x.classList.toggle(
+              "active",
+              x === button
+            )
+        );
+
+
+        renderTasks();
+
+      };
 
     }
   );
 
 
-  document.getElementById("focusStart").onclick=toggleFocus;
+  /*
+   * DURACIÓN DEL FOCUS
+   */
+
+  document.querySelectorAll(
+    ".duration"
+  ).forEach(
+    button => {
+
+      button.onclick = function(){
+
+        if(timerRunning)
+          return;
 
 
-  document.querySelectorAll(".store-tab").forEach(
-    b=>b.onclick=()=>{
+        focusMinutes =
+          Number(button.dataset.min);
 
-      document.querySelectorAll(".store-tab").forEach(
-        x=>x.classList.toggle("active",x===b)
-      );
 
-      renderStore(b.dataset.store);
+        timerLeft =
+          focusMinutes * 60;
+
+
+        document.querySelectorAll(
+          ".duration"
+        ).forEach(
+          x =>
+            x.classList.toggle(
+              "active",
+              x === button
+            )
+        );
+
+
+        updateTimer();
+
+      };
 
     }
   );
+
+
+  /*
+   * BOTÓN FOCUS
+   */
+
+  const focusStart =
+    document.getElementById(
+      "focusStart"
+    );
+
+  if(focusStart){
+
+    focusStart.onclick =
+      toggleFocus;
+
+  }
+
+
+  /*
+   * TABS STORE
+   */
+
+  document.querySelectorAll(
+    ".store-tab"
+  ).forEach(
+    button => {
+
+      button.onclick = function(){
+
+        document.querySelectorAll(
+          ".store-tab"
+        ).forEach(
+          x =>
+            x.classList.toggle(
+              "active",
+              x === button
+            )
+        );
+
+
+        renderStore(
+          button.dataset.store
+        );
+
+      };
+
+    }
+  );
+
+
+  console.log("Botones conectados.");
 
 }
 
@@ -201,18 +714,32 @@ function bind(){
 
 function showScreen(id){
 
-  document.querySelectorAll(".screen").forEach(
-    x=>x.classList.toggle("active",x.id===id)
+  document.querySelectorAll(
+    ".screen"
+  ).forEach(
+    screen =>
+      screen.classList.toggle(
+        "active",
+        screen.id === id
+      )
   );
 
-  document.querySelectorAll(".nav-item").forEach(
-    x=>x.classList.toggle(
-      "active",
-      x.dataset.screen===id
-    )
+
+  document.querySelectorAll(
+    ".nav-item"
+  ).forEach(
+    item =>
+      item.classList.toggle(
+        "active",
+        item.dataset.screen === id
+      )
   );
 
-  scrollTo(0,0);
+
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
@@ -224,66 +751,139 @@ function showScreen(id){
 function render(){
 
   renderHeader();
-
   renderXP();
-
   renderHome();
-
   renderSchedule();
-
   renderTasks();
-
   renderStore("themes");
-
   renderSettings();
-
   renderFocusStats();
 
 }
 
 
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 function renderHeader(){
 
-  const h=new Date().getHours();
+  const h =
+    new Date().getHours();
 
-  const name=
-    LifeOS.state.profile.nickname||
-    LifeOS.state.profile.name||
+
+  const name =
+    LifeOS.state.profile.nickname ||
+    LifeOS.state.profile.name ||
     "ahí";
 
-  document.getElementById("hello").textContent=
-    `${h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches"}, ${name} 👋`;
 
-  document.getElementById("todayLabel").textContent=
-    new Date().toLocaleDateString(
-      "es-CL",
-      {
-        weekday:"long",
-        day:"numeric",
-        month:"long"
-      }
+  const hello =
+    document.getElementById(
+      "hello"
     );
+
+
+  if(hello){
+
+    hello.textContent =
+      `${
+        h < 12
+        ? "Buenos días"
+        : h < 19
+        ? "Buenas tardes"
+        : "Buenas noches"
+      }, ${name} 👋`;
+
+  }
+
+
+  const todayLabel =
+    document.getElementById(
+      "todayLabel"
+    );
+
+
+  if(todayLabel){
+
+    todayLabel.textContent =
+      new Date().toLocaleDateString(
+        "es-CL",
+        {
+          weekday:"long",
+          day:"numeric",
+          month:"long"
+        }
+      );
+
+  }
 
 }
 
 
+/* =========================================================
+   XP
+   ========================================================= */
+
 function renderXP(){
 
-  const x=levelData();
+  const x =
+    typeof levelData === "function"
+    ? levelData()
+    : {
+        level:1,
+        current:0,
+        need:100
+      };
 
-  document.getElementById("level").textContent=x.level;
 
-  document.getElementById("xpText").textContent=
-    `${x.current} / ${x.need} XP`;
+  const level =
+    document.getElementById("level");
 
-  document.getElementById("xpBar").style.width=
-    x.current+"%";
+  const xpText =
+    document.getElementById("xpText");
 
-  document.getElementById("streak").textContent=
-    "🔥 "+LifeOS.state.streak;
+  const xpBar =
+    document.getElementById("xpBar");
 
-  document.getElementById("storeXP").textContent=
-    LifeOS.state.xp+" XP";
+  const streak =
+    document.getElementById("streak");
+
+  const storeXP =
+    document.getElementById("storeXP");
+
+
+  if(level)
+    level.textContent =
+      x.level;
+
+
+  if(xpText)
+    xpText.textContent =
+      `${x.current} / ${x.need} XP`;
+
+
+  if(xpBar)
+    xpBar.style.width =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          x.current
+        )
+      ) + "%";
+
+
+  if(streak)
+    streak.textContent =
+      "🔥 " +
+      (LifeOS.state.streak || 0);
+
+
+  if(storeXP)
+    storeXP.textContent =
+      (LifeOS.state.xp || 0) +
+      " XP";
 
 }
 
@@ -294,78 +894,161 @@ function renderXP(){
 
 function renderHome(){
 
-  const cs=classesDay(LifeOS.dayIndex());
-
-  const now=new Date();
-
-  const cur=
-    now.getHours()*60+
-    now.getMinutes();
-
-  const upcoming=
-    cs.find(c=>{
-
-      const [h,m]=c.start.split(":").map(Number);
-
-      return h*60+m>=cur;
-
-    })||cs[0];
+  const nextClass =
+    document.getElementById(
+      "nextClass"
+    );
 
 
-  document.getElementById("nextClass").innerHTML=
-    upcoming
-    ?
-    `<div class="card next-card">
+  if(nextClass){
 
-      <div class="next-time">
-        ${upcoming.start}<br>${upcoming.end}
-      </div>
+    let cs = [];
 
-      <div class="next-main">
+    try{
 
-        <b>
-          ${LifeOS.escapeHtml(upcoming.title)}
-        </b>
+      cs =
+        typeof classesDay === "function"
+        ? classesDay(
+            LifeOS.dayIndex()
+          )
+        : [];
 
-        <small>
-          ${
-            upcoming.room
-            ?"Sala "+LifeOS.escapeHtml(upcoming.room)
-            :"Sin sala"
+    }catch(error){
+
+      console.error(
+        "Error clases:",
+        error
+      );
+
+    }
+
+
+    const now =
+      new Date();
+
+
+    const cur =
+      now.getHours() * 60 +
+      now.getMinutes();
+
+
+    const upcoming =
+      cs.find(
+        c => {
+
+          const parts =
+            String(c.start)
+              .split(":")
+              .map(Number);
+
+
+          return (
+            parts[0] * 60 +
+            parts[1]
+          ) >= cur;
+
+        }
+      ) || cs[0];
+
+
+    nextClass.innerHTML =
+      upcoming
+      ?
+      `
+      <div class="card next-card">
+
+        <div class="next-time">
+          ${upcoming.start}<br>
+          ${upcoming.end}
+        </div>
+
+        <div class="next-main">
+
+          <b>
+            ${LifeOS.escapeHtml(
+              upcoming.title
+            )}
+          </b>
+
+          <small>
+
+            ${
+              upcoming.room
+              ? "Sala " +
+                LifeOS.escapeHtml(
+                  upcoming.room
+                )
+              : "Sin sala"
+            }
+
+            ${
+              upcoming.teacher
+              ? " · " +
+                LifeOS.escapeHtml(
+                  upcoming.teacher
+                )
+              : ""
+            }
+
+          </small>
+
+        </div>
+
+        <span class="badge">
+          🔔 ${
+            typeof reminderText === "function"
+            ? reminderText(
+                Number(
+                  upcoming.reminder
+                )
+              )
+            : ""
           }
-
-          ${
-            upcoming.teacher
-            ?" · "+LifeOS.escapeHtml(upcoming.teacher)
-            :""
-          }
-        </small>
+        </span>
 
       </div>
+      `
+      :
+      `
+      <div class="empty">
+        No tienes clases programadas para hoy.
+      </div>
+      `;
 
-      <span class="badge">
-        🔔 ${reminderText(+upcoming.reminder)}
-      </span>
-
-    </div>`
-
-    :
-
-    '<div class="empty">No tienes clases programadas para hoy.</div>';
-
-
-  const ts=
-    LifeOS.state.tasks
-      .filter(t=>t.date===LifeOS.today())
-      .slice(0,4);
+  }
 
 
-  document.getElementById("homeTasks").innerHTML=
-    ts.length
-    ?
-    ts.map(taskHTML).join("")
-    :
-    '<div class="empty">Tu día está libre. Añade una misión y empieza a ganar XP.</div>';
+  const homeTasks =
+    document.getElementById(
+      "homeTasks"
+    );
+
+
+  if(homeTasks){
+
+    const tasks =
+      LifeOS.state.tasks
+        .filter(
+          t =>
+            t.date ===
+            LifeOS.today()
+        )
+        .slice(0,4);
+
+
+    homeTasks.innerHTML =
+      tasks.length
+      ?
+      tasks.map(taskHTML).join("")
+      :
+      `
+      <div class="empty">
+        Tu día está libre.
+        Añade una misión y empieza a ganar XP.
+      </div>
+      `;
+
+  }
 
 
   bindDynamic();
@@ -379,53 +1062,148 @@ function renderHome(){
 
 function renderSchedule(){
 
-  document.getElementById("days").innerHTML=
-    DAYS.map(
-      (d,i)=>
-        `<button class="${i===selectedDay?"active":""}" data-day="${i}">
+  const days =
+    document.getElementById(
+      "days"
+    );
+
+
+  const scheduleList =
+    document.getElementById(
+      "scheduleList"
+    );
+
+
+  if(!days || !scheduleList)
+    return;
+
+
+  const dayNames =
+    typeof DAYS !== "undefined"
+    ? DAYS
+    : [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+        "Domingo"
+      ];
+
+
+  days.innerHTML =
+    dayNames.map(
+      (d,i) =>
+        `
+        <button
+          class="${
+            i === selectedDay
+            ? "active"
+            : ""
+          }"
+          data-day="${i}"
+        >
           ${d.slice(0,3)}
-        </button>`
+        </button>
+        `
     ).join("");
 
 
-  document.querySelectorAll("[data-day]").forEach(
-    b=>b.onclick=()=>{
+  days.querySelectorAll(
+    "[data-day]"
+  ).forEach(
+    button => {
 
-      selectedDay=+b.dataset.day;
+      button.onclick =
+        function(){
 
-      renderSchedule();
+          selectedDay =
+            Number(
+              button.dataset.day
+            );
+
+          renderSchedule();
+
+        };
 
     }
   );
 
 
-  const cs=classesDay(selectedDay);
+  let classes = [];
 
 
-  document.getElementById("scheduleList").innerHTML=
-    cs.length
+  try{
+
+    if(typeof classesDay === "function")
+      classes =
+        classesDay(
+          selectedDay
+        );
+
+  }catch(error){
+
+    console.error(
+      "Error renderizando horario:",
+      error
+    );
+
+  }
+
+
+  scheduleList.innerHTML =
+    classes.length
     ?
-    cs.map(
-      c=>
-        `<div class="card schedule-card" data-edit="${c.id}">
+    classes.map(
+      c =>
+        `
+        <div
+          class="card schedule-card"
+          data-edit="${c.id}"
+        >
 
           <div class="time">
-            ${c.start}<br>${c.end}
+            ${c.start}<br>
+            ${c.end}
           </div>
 
           <div>
 
             <div class="class-name">
-              ${LifeOS.escapeHtml(c.title)}
+              ${LifeOS.escapeHtml(
+                c.title
+              )}
             </div>
 
             <div class="meta">
 
-              ${c.room?"Sala "+LifeOS.escapeHtml(c.room):""}
+              ${
+                c.room
+                ? "Sala " +
+                  LifeOS.escapeHtml(
+                    c.room
+                  )
+                : ""
+              }
 
-              ${c.teacher?" · "+LifeOS.escapeHtml(c.teacher):""}
+              ${
+                c.teacher
+                ? " · " +
+                  LifeOS.escapeHtml(
+                    c.teacher
+                  )
+                : ""
+              }
 
-              · 🔔 ${reminderText(+c.reminder)}
+              ${
+                typeof reminderText === "function"
+                ? " · 🔔 " +
+                  reminderText(
+                    Number(c.reminder)
+                  )
+                : ""
+              }
 
             </div>
 
@@ -433,27 +1211,54 @@ function renderSchedule(){
 
           <span class="dot"></span>
 
-        </div>`
+        </div>
+        `
     ).join("")
-
     :
+    `
+    <div class="empty">
+      No hay clases este día.
+    </div>
+    `;
 
-    '<div class="empty">No hay clases este día.</div>';
+
+  scheduleList.querySelectorAll(
+    "[data-edit]"
+  ).forEach(
+    element => {
+
+      element.onclick =
+        function(){
+
+          const c =
+            LifeOS.state.classes.find(
+              x =>
+                x.id ===
+                element.dataset.edit
+            );
 
 
-  document.querySelectorAll("[data-edit]").forEach(
-    e=>e.onclick=()=>{
+          if(!c)
+            return;
 
-      const c=
-        LifeOS.state.classes.find(
-          x=>x.id===e.dataset.edit
-        );
 
-      openModal(
-        "Editar clase",
-        classForm(c),
-        c
-      );
+          if(typeof classForm !== "function"){
+
+            toast(
+              "No se encontró el formulario de clases."
+            );
+
+            return;
+          }
+
+
+          openModal(
+            "Editar clase",
+            classForm(c),
+            c
+          );
+
+        };
 
     }
   );
@@ -471,20 +1276,35 @@ function taskHTML(t){
     <div class="card task">
 
       <button
-        class="check ${t.done?"done":""}"
+        class="check ${
+          t.done ? "done" : ""
+        }"
         data-task="${t.id}"
       >
-        ${t.done?"✓":""}
+        ${
+          t.done
+          ? "✓"
+          : ""
+        }
       </button>
 
-      <div class="task-main ${t.done?"done":""}">
+      <div class="task-main ${
+        t.done ? "done" : ""
+      }">
 
         <b>
-          ${LifeOS.escapeHtml(t.title)}
+          ${LifeOS.escapeHtml(
+            t.title
+          )}
         </b>
 
         <small>
-          ${t.date} · ${t.done?"Completado":"Pendiente"}
+          ${t.date} ·
+          ${
+            t.done
+            ? "Completado"
+            : "Pendiente"
+          }
         </small>
 
       </div>
@@ -501,21 +1321,46 @@ function taskHTML(t){
 
 function renderTasks(){
 
-  let ts=[...LifeOS.state.tasks];
-
-  if(taskFilter==="pending")
-    ts=ts.filter(t=>!t.done);
-
-  if(taskFilter==="done")
-    ts=ts.filter(t=>t.done);
+  const list =
+    document.getElementById(
+      "tasksList"
+    );
 
 
-  document.getElementById("tasksList").innerHTML=
-    ts.length
+  if(!list)
+    return;
+
+
+  let tasks =
+    [...LifeOS.state.tasks];
+
+
+  if(taskFilter === "pending")
+    tasks =
+      tasks.filter(
+        t => !t.done
+      );
+
+
+  if(taskFilter === "done")
+    tasks =
+      tasks.filter(
+        t => t.done
+      );
+
+
+  list.innerHTML =
+    tasks.length
     ?
-    ts.map(taskHTML).join("")
+    tasks.map(
+      taskHTML
+    ).join("")
     :
-    '<div class="empty">No hay objetivos en esta vista.</div>';
+    `
+    <div class="empty">
+      No hay objetivos en esta vista.
+    </div>
+    `;
 
 
   bindDynamic();
@@ -525,8 +1370,21 @@ function renderTasks(){
 
 function bindDynamic(){
 
-  document.querySelectorAll("[data-task]").forEach(
-    b=>b.onclick=()=>toggleTask(b.dataset.task)
+  document.querySelectorAll(
+    "[data-task]"
+  ).forEach(
+    button => {
+
+      button.onclick =
+        function(){
+
+          toggleTask(
+            button.dataset.task
+          );
+
+        };
+
+    }
   );
 
 }
@@ -536,144 +1394,267 @@ function bindDynamic(){
    MODALES
    ========================================================= */
 
-function openModal(title,html,existing=null){
+function openModal(
+  title,
+  html,
+  existing = null
+){
 
-  document.getElementById("modalTitle").textContent=title;
+  const modal =
+    document.getElementById(
+      "modal"
+    );
 
-  const f=document.getElementById("modalForm");
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
 
-  f.innerHTML=html;
-
-  document.getElementById("modal").classList.remove("hidden");
-
-
-  f.onsubmit=async e=>{
-
-    e.preventDefault();
-
-    const d=new FormData(f);
-
-
-    if(
-      html.includes('name="title"')&&
-      html.includes('name="day"')
-    ){
-
-      const data={
-
-        title:d.get("title"),
-
-        day:+d.get("day"),
-
-        room:d.get("room"),
-
-        start:d.get("start"),
-
-        end:d.get("end"),
-
-        teacher:d.get("teacher"),
-
-        reminder:+d.get("reminder")
-
-      };
+  const form =
+    document.getElementById(
+      "modalForm"
+    );
 
 
-      if(existing){
+  if(!modal || !form)
+    return;
 
-        Object.assign(existing,data);
 
-      }else{
+  if(modalTitle)
+    modalTitle.textContent =
+      title;
 
-        LifeOS.state.classes.push({
 
-          id:LifeOS.uid("class"),
+  form.innerHTML =
+    html;
 
-          ...data
 
-        });
+  modal.classList.remove(
+    "hidden"
+  );
+
+
+  form.onsubmit =
+    async function(event){
+
+      event.preventDefault();
+
+
+      const data =
+        new FormData(form);
+
+
+      /*
+       * CLASE
+       */
+
+      if(
+        html.includes(
+          'name="day"'
+        )
+      ){
+
+        const classData = {
+
+          title:
+            data.get("title"),
+
+          day:
+            Number(
+              data.get("day")
+            ),
+
+          room:
+            data.get("room") || "",
+
+          start:
+            data.get("start"),
+
+          end:
+            data.get("end"),
+
+          teacher:
+            data.get("teacher") || "",
+
+          reminder:
+            Number(
+              data.get("reminder")
+            )
+
+        };
+
+
+        if(existing){
+
+          Object.assign(
+            existing,
+            classData
+          );
+
+        }else{
+
+          LifeOS.state.classes.push({
+
+            id:
+              LifeOS.uid(
+                "class"
+              ),
+
+            ...classData
+
+          });
+
+        }
+
+
+        LifeOS.save();
+
+
+        /*
+         * Supabase es secundario.
+         * Si falla, LifeOS local sigue funcionando.
+         */
+
+        try{
+
+          await syncClassesToSupabase();
+
+        }catch(error){
+
+          console.error(
+            error
+          );
+
+        }
 
       }
 
 
-      LifeOS.save();
+      /*
+       * TAREA
+       */
+
+      else{
+
+        const taskData = {
+
+          title:
+            data.get("title"),
+
+          xp:
+            Number(
+              data.get("xp")
+            ),
+
+          date:
+            data.get("date"),
+
+          done:false
+
+        };
 
 
-      await syncClassesToSupabase();
+        if(existing){
+
+          Object.assign(
+            existing,
+            taskData
+          );
+
+        }else{
+
+          LifeOS.state.tasks.push({
+
+            id:
+              LifeOS.uid(
+                "task"
+              ),
+
+            ...taskData
+
+          });
+
+        }
 
 
-    }else{
+        LifeOS.save();
 
-      const data={
+      }
 
-        title:d.get("title"),
-
-        xp:+d.get("xp"),
-
-        date:d.get("date"),
-
-        done:false
-
-      };
-
-
-      if(existing)
-
-        Object.assign(existing,data);
-
-      else
-
-        LifeOS.state.tasks.push({
-
-          id:LifeOS.uid("task"),
-
-          ...data
-
-        });
-
-
-      LifeOS.save();
-
-    }
-
-
-    closeModal();
-
-    render();
-
-    toast("Guardado");
-
-  };
-
-
-  f.querySelector("[data-close]")
-    ?.addEventListener("click",closeModal);
-
-
-  if(
-    existing&&
-    document.getElementById("deleteClass")
-  ){
-
-    document.getElementById("deleteClass").onclick=
-    async ()=>{
-
-      LifeOS.state.classes=
-        LifeOS.state.classes.filter(
-          x=>x.id!==existing.id
-        );
-
-
-      LifeOS.save();
-
-      await syncClassesToSupabase();
 
       closeModal();
 
       render();
 
-      toast("Clase eliminada");
+      toast(
+        "Guardado correctamente"
+      );
 
     };
+
+
+  const close =
+    form.querySelector(
+      "[data-close]"
+    );
+
+
+  if(close)
+    close.onclick =
+      closeModal;
+
+
+  /*
+   * BORRAR CLASE
+   */
+
+  const deleteClass =
+    document.getElementById(
+      "deleteClass"
+    );
+
+
+  if(
+    existing &&
+    deleteClass
+  ){
+
+    deleteClass.onclick =
+      async function(){
+
+        LifeOS.state.classes =
+          LifeOS.state.classes.filter(
+            x =>
+              x.id !==
+              existing.id
+          );
+
+
+        LifeOS.save();
+
+
+        try{
+
+          await syncClassesToSupabase();
+
+        }catch(error){
+
+          console.error(
+            error
+          );
+
+        }
+
+
+        closeModal();
+
+        render();
+
+        toast(
+          "Clase eliminada"
+        );
+
+      };
 
   }
 
@@ -682,9 +1663,16 @@ function openModal(title,html,existing=null){
 
 function closeModal(){
 
-  document
-    .getElementById("modal")
-    .classList.add("hidden");
+  const modal =
+    document.getElementById(
+      "modal"
+    );
+
+
+  if(modal)
+    modal.classList.add(
+      "hidden"
+    );
 
 }
 
@@ -701,65 +1689,81 @@ async function loadClassesFromSupabase(){
 
   try{
 
-    const {
-      data:{
-        user
-      },
-      error:userError
-    }=
+    const result =
       await supabaseClient.auth.getUser();
 
 
-    if(userError)
-      throw userError;
+    const user =
+      result.data?.user;
 
 
-    if(!user)
+    if(!user){
+
+      console.log(
+        "No hay sesión Supabase activa. LifeOS funcionará localmente."
+      );
+
       return;
 
+    }
 
-    const {
-      data,
-      error
-    }=
+
+    const response =
       await supabaseClient
         .from("classes")
         .select("*")
-        .eq("user_id",user.id)
-        .order("start_time");
+        .eq(
+          "user_id",
+          user.id
+        )
+        .order(
+          "start_time"
+        );
 
 
-    if(error)
-      throw error;
+    if(response.error)
+      throw response.error;
 
 
-    if(!Array.isArray(data))
+    if(!Array.isArray(response.data))
       return;
 
 
-    LifeOS.state.classes=
-      data.map(c=>({
+    LifeOS.state.classes =
+      response.data.map(
+        c => ({
 
-        id:c.id,
+          id:c.id,
 
-        title:c.title,
+          title:c.title,
 
-        day:Number(c.day),
+          day:Number(c.day),
 
-        start:c.start_time,
+          start:c.start_time,
 
-        end:c.end_time,
+          end:c.end_time,
 
-        room:c.room||"",
+          room:c.room || "",
 
-        teacher:c.teacher||"",
+          teacher:c.teacher || "",
 
-        reminder:
-          Number.isFinite(Number(c.reminder_minutes))
-          ?Number(c.reminder_minutes)
-          :LifeOS.state.profile.reminder
+          reminder:
+            Number.isFinite(
+              Number(
+                c.reminder_minutes
+              )
+            )
+            ?
+            Number(
+              c.reminder_minutes
+            )
+            :
+            Number(
+              LifeOS.state.profile.reminder
+            )
 
-      }));
+        })
+      );
 
 
     LifeOS.save();
@@ -775,7 +1779,7 @@ async function loadClassesFromSupabase(){
   }catch(error){
 
     console.error(
-      "Error cargando clases desde Supabase:",
+      "Supabase: no se pudieron cargar las clases.",
       error
     );
 
@@ -785,41 +1789,29 @@ async function loadClassesFromSupabase(){
 
 
 /* =========================================================
-   SUPABASE — SINCRONIZAR CLASES
+   SUPABASE — SINCRONIZAR
    ========================================================= */
 
 async function syncClassesToSupabase(){
 
-  if(!supabaseClient){
-
-    console.warn(
-      "Supabase no está inicializado."
-    );
-
+  if(!supabaseClient)
     return;
-
-  }
 
 
   try{
 
-    const {
-      data:{
-        user
-      },
-      error:userError
-    }=
+    const result =
       await supabaseClient.auth.getUser();
 
 
-    if(userError)
-      throw userError;
+    const user =
+      result.data?.user;
 
 
     if(!user){
 
-      console.warn(
-        "No hay usuario autenticado en Supabase."
+      console.log(
+        "Sin sesión Supabase. Guardando solamente local."
       );
 
       return;
@@ -827,69 +1819,94 @@ async function syncClassesToSupabase(){
     }
 
 
-    const {
-      error:deleteError
-    }=
+    /*
+     * Borramos las clases actuales del usuario.
+     */
+
+    const deleted =
       await supabaseClient
         .from("classes")
         .delete()
-        .eq("user_id",user.id);
+        .eq(
+          "user_id",
+          user.id
+        );
 
 
-    if(deleteError)
-      throw deleteError;
+    if(deleted.error)
+      throw deleted.error;
 
 
-    if(!LifeOS.state.classes.length)
+    /*
+     * Si no quedan clases,
+     * terminamos aquí.
+     */
+
+    if(
+      !LifeOS.state.classes ||
+      !LifeOS.state.classes.length
+    )
       return;
 
 
-    const rows=
-      LifeOS.state.classes.map(c=>({
+    const rows =
+      LifeOS.state.classes.map(
+        c => ({
 
-        user_id:user.id,
+          user_id:user.id,
 
-        title:c.title,
+          title:c.title,
 
-        day:Number(c.day),
+          day:Number(c.day),
 
-        start_time:c.start,
+          start_time:c.start,
 
-        end_time:c.end,
+          end_time:c.end,
 
-        room:c.room||null,
+          room:
+            c.room || null,
 
-        teacher:c.teacher||null,
+          teacher:
+            c.teacher || null,
 
-        reminder_minutes:
-          Number.isFinite(Number(c.reminder))
-          ?Number(c.reminder)
-          :90
+          reminder_minutes:
+            Number.isFinite(
+              Number(
+                c.reminder
+              )
+            )
+            ?
+            Number(
+              c.reminder
+            )
+            :
+            90
 
-      }));
+        })
+      );
 
 
-    const {
-      error:insertError
-    }=
+    const inserted =
       await supabaseClient
         .from("classes")
-        .insert(rows);
+        .insert(
+          rows
+        );
 
 
-    if(insertError)
-      throw insertError;
+    if(inserted.error)
+      throw inserted.error;
 
 
     console.log(
-      "Clases sincronizadas con Supabase."
+      "Clases sincronizadas."
     );
 
 
   }catch(error){
 
     console.error(
-      "Error sincronizando clases con Supabase:",
+      "Error sincronizando Supabase:",
       error
     );
 
@@ -904,38 +1921,60 @@ async function syncClassesToSupabase(){
 
 function toggleTask(id){
 
-  const t=
+  const task =
     LifeOS.state.tasks.find(
-      x=>x.id===id
+      x =>
+        x.id === id
     );
 
-  if(!t)return;
+
+  if(!task)
+    return;
 
 
-  if(!t.done){
+  if(!task.done){
 
-    t.done=true;
+    task.done = true;
 
     LifeOS.save();
 
-    addXP(
-      t.xp,
-      t.title
-    );
+
+    if(typeof addXP === "function"){
+
+      addXP(
+        task.xp,
+        task.title
+      );
+
+    }else{
+
+      LifeOS.state.xp +=
+        Number(task.xp) || 0;
+
+      LifeOS.save();
+
+      render();
+
+    }
 
   }else{
 
-    t.done=false;
+    task.done = false;
 
-    LifeOS.state.xp=
+
+    LifeOS.state.xp =
       Math.max(
         0,
-        LifeOS.state.xp-t.xp
+        LifeOS.state.xp -
+        Number(task.xp || 0)
       );
+
 
     LifeOS.save();
 
-    toast(`-${t.xp} XP`);
+    toast(
+      `-${task.xp} XP`
+    );
 
     render();
 
@@ -952,96 +1991,183 @@ function toggleFocus(){
 
   if(timerRunning){
 
-    clearInterval(timerInterval);
+    clearInterval(
+      timerInterval
+    );
 
-    timerRunning=false;
 
-    document.getElementById("focusStart")
-      .textContent="Continuar enfoque";
+    timerRunning =
+      false;
 
-    document.getElementById("timerState")
-      .textContent="Pausado";
+
+    const button =
+      document.getElementById(
+        "focusStart"
+      );
+
+
+    const state =
+      document.getElementById(
+        "timerState"
+      );
+
+
+    if(button)
+      button.textContent =
+        "Continuar enfoque";
+
+
+    if(state)
+      state.textContent =
+        "Pausado";
+
 
     return;
 
   }
 
 
-  timerRunning=true;
-
-  document.getElementById("focusStart")
-    .textContent="Pausar";
-
-  document.getElementById("timerState")
-    .textContent="Enfoque activo";
+  timerRunning =
+    true;
 
 
-  timerInterval=setInterval(
-    ()=>{
+  const button =
+    document.getElementById(
+      "focusStart"
+    );
 
-      timerLeft--;
 
-      updateTimer();
+  const state =
+    document.getElementById(
+      "timerState"
+    );
 
-      if(timerLeft<=0)
-        finishFocus();
 
-    },
-    1000
-  );
+  if(button)
+    button.textContent =
+      "Pausar";
+
+
+  if(state)
+    state.textContent =
+      "Enfoque activo";
+
+
+  timerInterval =
+    setInterval(
+      function(){
+
+        timerLeft--;
+
+        updateTimer();
+
+
+        if(timerLeft <= 0){
+
+          finishFocus();
+
+        }
+
+      },
+      1000
+    );
 
 }
 
 
 function updateTimer(){
 
-  const m=Math.floor(timerLeft/60);
-
-  const s=timerLeft%60;
-
-
-  document.getElementById("timer").textContent=
-    `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const timer =
+    document.getElementById(
+      "timer"
+    );
 
 
-  const total=focusMinutes*60;
+  if(timer){
 
-  const deg=
-    (1-timerLeft/total)*360;
+    const minutes =
+      Math.floor(
+        timerLeft / 60
+      );
 
 
-  document.querySelector(".timer-ring").style.background=
-    `conic-gradient(var(--accent) ${deg}deg,#eeeaf6 ${deg}deg)`;
+    const seconds =
+      timerLeft % 60;
+
+
+    timer.textContent =
+      `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+  }
+
+
+  const ring =
+    document.querySelector(
+      ".timer-ring"
+    );
+
+
+  if(ring){
+
+    const total =
+      focusMinutes * 60;
+
+
+    const deg =
+      (
+        1 -
+        timerLeft / total
+      ) * 360;
+
+
+    ring.style.background =
+      `conic-gradient(var(--accent) ${deg}deg,#eeeaf6 ${deg}deg)`;
+
+  }
 
 }
 
 
 function finishFocus(){
 
-  clearInterval(timerInterval);
+  clearInterval(
+    timerInterval
+  );
 
-  timerRunning=false;
+
+  timerRunning =
+    false;
 
 
-  const title=
-    document.getElementById("focusTitle")
-      .value.trim()||
+  const titleInput =
+    document.getElementById(
+      "focusTitle"
+    );
+
+
+  const title =
+    titleInput?.value.trim() ||
     "Sesión de enfoque";
 
 
-  const xp=
+  const xp =
     Math.round(
-      focusMinutes*1.33
+      focusMinutes * 1.33
     );
 
 
   LifeOS.state.focus.push({
 
-    id:LifeOS.uid("focus"),
+    id:
+      LifeOS.uid(
+        "focus"
+      ),
 
-    date:LifeOS.today(),
+    date:
+      LifeOS.today(),
 
-    minutes:focusMinutes,
+    minutes:
+      focusMinutes,
 
     title,
 
@@ -1053,21 +2179,47 @@ function finishFocus(){
   LifeOS.save();
 
 
-  addXP(
-    xp,
-    title
-  );
+  if(typeof addXP === "function"){
+
+    addXP(
+      xp,
+      title
+    );
+
+  }else{
+
+    LifeOS.state.xp += xp;
+
+    LifeOS.save();
+
+  }
 
 
-  document.getElementById("focusStart")
-    .textContent="Comenzar enfoque";
+  const button =
+    document.getElementById(
+      "focusStart"
+    );
 
 
-  document.getElementById("timerState")
-    .textContent="¡Sesión completada!";
+  const state =
+    document.getElementById(
+      "timerState"
+    );
 
 
-  timerLeft=focusMinutes*60;
+  if(button)
+    button.textContent =
+      "Comenzar enfoque";
+
+
+  if(state)
+    state.textContent =
+      "¡Sesión completada!";
+
+
+  timerLeft =
+    focusMinutes * 60;
+
 
   updateTimer();
 
@@ -1076,46 +2228,89 @@ function finishFocus(){
 }
 
 
+/* =========================================================
+   ESTADÍSTICAS FOCUS
+   ========================================================= */
+
 function renderFocusStats(){
 
-  const t=LifeOS.today();
+  const today =
+    LifeOS.today();
 
 
-  const today=
-    LifeOS.state.focus
-      .filter(x=>x.date===t)
+  const focus =
+    LifeOS.state.focus || [];
+
+
+  const todayMinutes =
+    focus
+      .filter(
+        x =>
+          x.date === today
+      )
       .reduce(
-        (a,x)=>a+x.minutes,
+        (sum,x) =>
+          sum +
+          Number(
+            x.minutes || 0
+          ),
         0
       );
 
 
-  const week=
-    LifeOS.state.focus
-      .reduce(
-        (a,x)=>a+x.minutes,
-        0
-      );
+  const totalMinutes =
+    focus.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.minutes || 0
+        ),
+      0
+    );
 
 
-  const xp=
-    LifeOS.state.focus
-      .reduce(
-        (a,x)=>a+x.xp,
-        0
-      );
+  const totalXP =
+    focus.reduce(
+      (sum,x) =>
+        sum +
+        Number(
+          x.xp || 0
+        ),
+      0
+    );
 
 
-  document.getElementById("focusToday")
-    .textContent=today+"m";
+  const todayElement =
+    document.getElementById(
+      "focusToday"
+    );
 
 
-  document.getElementById("focusWeek")
-    .textContent=week+"m";
+  const weekElement =
+    document.getElementById(
+      "focusWeek"
+    );
 
 
-  document.getElementById("focusXP")
-    .textContent=xp;
+  const xpElement =
+    document.getElementById(
+      "focusXP"
+    );
+
+
+  if(todayElement)
+    todayElement.textContent =
+      todayMinutes + "m";
+
+
+  if(weekElement)
+    weekElement.textContent =
+      totalMinutes + "m";
+
+
+  if(xpElement)
+    xpElement.textContent =
+      totalXP;
 
 }
 
@@ -1124,25 +2319,45 @@ function renderFocusStats(){
    TIENDA
    ========================================================= */
 
-function renderStore(type){
+function renderStore(
+  type = "themes"
+){
 
-  const items=
-    type==="themes"
-    ?THEMES
-    :type==="effects"
-    ?EFFECTS
-    :AVATARS;
+  const container =
+    document.getElementById(
+      "storeItems"
+    );
 
 
-  document.getElementById("storeItems").innerHTML=
+  if(!container)
+    return;
+
+
+  const items =
+    type === "themes"
+    ? THEMES
+    : type === "effects"
+    ? EFFECTS
+    : AVATARS;
+
+
+  const unlocked =
+    LifeOS.state.unlocked || [];
+
+
+  container.innerHTML =
     items.map(
-      i=>{
+      item => {
 
-        const unlocked=
-          LifeOS.state.unlocked.includes(i.id);
+        const isUnlocked =
+          unlocked.includes(
+            item.id
+          );
 
-        const equipped=
-          LifeOS.state.equipped===i.id;
+
+        const equipped =
+          LifeOS.state.equipped ===
+          item.id;
 
 
         return `
@@ -1151,44 +2366,52 @@ function renderStore(type){
 
             <div
               class="skin-preview"
-              style="background:${
-                i.bg||
-                "linear-gradient(135deg,#f3efff,#ddd5ff)"
-              }"
+              style="
+                background:${
+                  item.bg ||
+                  "linear-gradient(135deg,#f3efff,#ddd5ff)"
+                }
+              "
             >
-              ${i.emoji}
+              ${item.emoji}
             </div>
 
             <div class="skin-body">
 
               <span class="rarity">
-                ${i.rarity}
+                ${item.rarity}
               </span>
 
               <h3>
-                ${i.name}
+                ${item.name}
               </h3>
 
               <p>
                 ${
-                  i.desc||
+                  item.desc ||
                   "Personaliza tu experiencia en LifeOS."
                 }
               </p>
 
               <button
-                class="${equipped?"soft":"primary"}"
-                data-skin="${i.id}"
-                data-cost="${i.cost}"
+                class="${
+                  equipped
+                  ? "soft"
+                  : "primary"
+                }"
+                data-skin="${item.id}"
+                data-cost="${item.cost}"
                 data-type="${type}"
               >
+
                 ${
                   equipped
-                  ?"✓ Equipado"
-                  :unlocked
-                  ?"Equipar"
-                  :i.cost+" XP"
+                  ? "✓ Equipado"
+                  : isUnlocked
+                  ? "Equipar"
+                  : item.cost + " XP"
                 }
+
               </button>
 
             </div>
@@ -1201,43 +2424,106 @@ function renderStore(type){
     ).join("");
 
 
-  document.querySelectorAll("[data-skin]").forEach(
-    b=>b.onclick=()=>buySkin(
-      b.dataset.skin,
-      +b.dataset.cost,
-      b.dataset.type
+  container
+    .querySelectorAll(
+      "[data-skin]"
     )
-  );
+    .forEach(
+      button => {
+
+        button.onclick =
+          function(){
+
+            buySkin(
+              button.dataset.skin,
+              Number(
+                button.dataset.cost
+              ),
+              button.dataset.type
+            );
+
+          };
+
+      }
+    );
 
 }
 
 
-function buySkin(id,cost,type){
+function buySkin(
+  id,
+  cost,
+  type
+){
 
-  if(!LifeOS.state.unlocked.includes(id)){
+  if(
+    !LifeOS.state.unlocked.includes(
+      id
+    )
+  ){
 
-    if(!spendXP(cost)){
+    if(
+      typeof spendXP === "function"
+    ){
 
-      toast(
-        `Te faltan ${cost-LifeOS.state.xp} XP`
-      );
+      if(!spendXP(cost)){
 
-      return;
+        toast(
+          `Te faltan ${
+            cost -
+            LifeOS.state.xp
+          } XP`
+        );
+
+        return;
+
+      }
+
+    }else{
+
+      if(
+        LifeOS.state.xp <
+        cost
+      ){
+
+        toast(
+          `Te faltan ${
+            cost -
+            LifeOS.state.xp
+          } XP`
+        );
+
+        return;
+
+      }
+
+
+      LifeOS.state.xp -= cost;
 
     }
 
-    LifeOS.state.unlocked.push(id);
 
-    toast("✨ Desbloqueado");
+    LifeOS.state.unlocked.push(
+      id
+    );
+
+
+    toast(
+      "✨ Desbloqueado"
+    );
 
   }
 
 
-  if(type==="themes"){
+  if(type === "themes"){
 
-    LifeOS.state.equipped=id;
+    LifeOS.state.equipped =
+      id;
 
-    LifeOS.state.profile.theme=id;
+
+    LifeOS.state.profile.theme =
+      id;
+
 
     applyTheme();
 
@@ -1246,7 +2532,11 @@ function buySkin(id,cost,type){
 
   LifeOS.save();
 
-  renderStore(type);
+
+  renderStore(
+    type
+  );
+
 
   renderXP();
 
@@ -1259,121 +2549,106 @@ function buySkin(id,cost,type){
 
 function applyTheme(){
 
-  document.body.dataset.theme=
-    LifeOS.state.equipped;
+  const equipped =
+    LifeOS.state.equipped ||
+    "midnight";
 
 
-  const t=
+  document.body.dataset.theme =
+    equipped;
+
+
+  const theme =
     THEMES.find(
-      x=>x.id===LifeOS.state.equipped
-    )||THEMES[0];
+      x =>
+        x.id ===
+        equipped
+    ) ||
+    THEMES[0];
 
 
-  const root=
-    document.documentElement;
-
-
-  const map={
+  const map = {
 
     midnight:[
       "#7357e8",
       "#a78cff",
-      "#f6f5fb",
-      "#24212d"
+      "#f6f5fb"
     ],
 
     lavender:[
       "#9272e8",
       "#c1aaff",
-      "#f8f5ff",
-      "#27222f"
+      "#f8f5ff"
     ],
 
     ocean:[
       "#2b8dbb",
       "#68c7ec",
-      "#f2fbff",
-      "#202c31"
+      "#f2fbff"
     ],
 
     forest:[
       "#258d5a",
       "#62c993",
-      "#f2fbf6",
-      "#202b24"
+      "#f2fbf6"
     ],
 
     sunset:[
       "#e76c5c",
       "#ffad82",
-      "#fff7f3",
-      "#332522"
+      "#fff7f3"
     ],
 
     cosmos:[
       "#6756df",
       "#a08fff",
-      "#f5f3ff",
-      "#242033"
+      "#f5f3ff"
     ],
 
     aurora:[
       "#2b9c80",
       "#76e0b9",
-      "#f1fcf8",
-      "#202c29"
+      "#f1fcf8"
     ],
 
     glass:[
       "#6094ca",
       "#a8d1ef",
-      "#f3f8fd",
-      "#202933"
+      "#f3f8fd"
     ]
 
   };
 
 
-  const v=
-    map[t.id]||map.midnight;
+  const values =
+    map[
+      theme.id
+    ] ||
+    map.midnight;
 
 
-  root.style.setProperty(
-    "--accent",
-    v[0]
-  );
+  document.documentElement
+    .style
+    .setProperty(
+      "--accent",
+      values[0]
+    );
 
 
-  root.style.setProperty(
-    "--accent2",
-    v[1]
-  );
+  document.documentElement
+    .style
+    .setProperty(
+      "--accent2",
+      values[1]
+    );
 
 
-  root.style.setProperty(
-    "--soft",
-    v[2]
-  );
-
-
-  root.style.setProperty(
-    "--card",
-    t.id==="midnight"||
-    t.id==="cosmos"
-    ?" #171525"
-    :"#fff"
-  );
-
-
-  if(
-    t.id==="midnight"||
-    t.id==="cosmos"
-  ){
-
-    document.body.style.background=
-      "#f6f5fb";
-
-  }
+  document.documentElement
+    .style
+    .setProperty(
+      "--soft",
+      values[2]
+    );
 
 }
 
@@ -1384,52 +2659,126 @@ function applyTheme(){
 
 function renderSettings(){
 
-  const p=LifeOS.state.profile;
+  const profile =
+    LifeOS.state.profile;
 
 
-  document.getElementById("nameInput").value=
-    p.name;
+  const nameInput =
+    document.getElementById(
+      "nameInput"
+    );
 
 
-  document.getElementById("nicknameInput").value=
-    p.nickname;
+  const nicknameInput =
+    document.getElementById(
+      "nicknameInput"
+    );
 
 
-  document.getElementById("reminderInput").value=
-    p.reminder;
+  const reminderInput =
+    document.getElementById(
+      "reminderInput"
+    );
 
 
-  document.getElementById("morningInput").checked=
-    p.morning;
+  const morningInput =
+    document.getElementById(
+      "morningInput"
+    );
 
 
-  document.getElementById("nightInput").checked=
-    p.night;
+  const nightInput =
+    document.getElementById(
+      "nightInput"
+    );
 
 
-  document.getElementById("animationsInput").checked=
-    p.animations;
+  const animationsInput =
+    document.getElementById(
+      "animationsInput"
+    );
 
 
-  document.getElementById("effectsInput").checked=
-    p.effects;
+  const effectsInput =
+    document.getElementById(
+      "effectsInput"
+    );
 
 
-  document.getElementById("themeSelect").innerHTML=
-    THEMES
-      .filter(
-        t=>LifeOS.state.unlocked.includes(t.id)
-      )
-      .map(
-        t=>
-          `<option
-            value="${t.id}"
-            ${LifeOS.state.equipped===t.id?"selected":""}
-          >
-            ${t.name}
-          </option>`
-      )
-      .join("");
+  if(nameInput)
+    nameInput.value =
+      profile.name || "";
+
+
+  if(nicknameInput)
+    nicknameInput.value =
+      profile.nickname || "";
+
+
+  if(reminderInput)
+    reminderInput.value =
+      profile.reminder || 60;
+
+
+  if(morningInput)
+    morningInput.checked =
+      !!profile.morning;
+
+
+  if(nightInput)
+    nightInput.checked =
+      !!profile.night;
+
+
+  if(animationsInput)
+    animationsInput.checked =
+      profile.animations !== false;
+
+
+  if(effectsInput)
+    effectsInput.checked =
+      profile.effects !== false;
+
+
+  const themeSelect =
+    document.getElementById(
+      "themeSelect"
+    );
+
+
+  if(themeSelect){
+
+    const unlocked =
+      LifeOS.state.unlocked || [];
+
+
+    themeSelect.innerHTML =
+      THEMES
+        .filter(
+          theme =>
+            unlocked.includes(
+              theme.id
+            )
+        )
+        .map(
+          theme =>
+            `
+            <option
+              value="${theme.id}"
+              ${
+                LifeOS.state.equipped ===
+                theme.id
+                ? "selected"
+                : ""
+              }
+            >
+              ${theme.name}
+            </option>
+            `
+        )
+        .join("");
+
+  }
 
 }
 
@@ -1440,53 +2789,113 @@ function renderSettings(){
 
 function saveSettings(){
 
-  const p=LifeOS.state.profile;
+  const profile =
+    LifeOS.state.profile;
 
 
-  p.name=
-    document.getElementById("nameInput")
-      .value.trim();
+  const nameInput =
+    document.getElementById(
+      "nameInput"
+    );
 
 
-  p.nickname=
-    document.getElementById("nicknameInput")
-      .value.trim();
+  const nicknameInput =
+    document.getElementById(
+      "nicknameInput"
+    );
 
 
-  p.reminder=
-    +document.getElementById("reminderInput")
-      .value;
+  const reminderInput =
+    document.getElementById(
+      "reminderInput"
+    );
 
 
-  p.morning=
-    document.getElementById("morningInput")
-      .checked;
+  const morningInput =
+    document.getElementById(
+      "morningInput"
+    );
 
 
-  p.night=
-    document.getElementById("nightInput")
-      .checked;
+  const nightInput =
+    document.getElementById(
+      "nightInput"
+    );
 
 
-  p.animations=
-    document.getElementById("animationsInput")
-      .checked;
+  const animationsInput =
+    document.getElementById(
+      "animationsInput"
+    );
 
 
-  p.effects=
-    document.getElementById("effectsInput")
-      .checked;
+  const effectsInput =
+    document.getElementById(
+      "effectsInput"
+    );
 
 
-  const theme=
-    document.getElementById("themeSelect")
-      .value;
+  if(nameInput)
+    profile.name =
+      nameInput.value.trim();
 
 
-  if(
-    LifeOS.state.unlocked.includes(theme)
-  )
-    LifeOS.state.equipped=theme;
+  if(nicknameInput)
+    profile.nickname =
+      nicknameInput.value.trim();
+
+
+  if(reminderInput)
+    profile.reminder =
+      Number(
+        reminderInput.value
+      );
+
+
+  if(morningInput)
+    profile.morning =
+      morningInput.checked;
+
+
+  if(nightInput)
+    profile.night =
+      nightInput.checked;
+
+
+  if(animationsInput)
+    profile.animations =
+      animationsInput.checked;
+
+
+  if(effectsInput)
+    profile.effects =
+      effectsInput.checked;
+
+
+  const themeSelect =
+    document.getElementById(
+      "themeSelect"
+    );
+
+
+  if(themeSelect){
+
+    const theme =
+      themeSelect.value;
+
+
+    if(
+      LifeOS.state.unlocked.includes(
+        theme
+      )
+    ){
+
+      LifeOS.state.equipped =
+        theme;
+
+    }
+
+  }
 
 
   LifeOS.save();
@@ -1495,7 +2904,9 @@ function saveSettings(){
 
   render();
 
-  toast("Configuración guardada");
+  toast(
+    "Configuración guardada"
+  );
 
 }
 
@@ -1506,51 +2917,92 @@ function saveSettings(){
 
 async function requestNotifications(){
 
-  if(window.LifeOSNotifications){
+  try{
 
-    await LifeOSNotifications.requestNotifications();
+    if(
+      window.LifeOSNotifications
+    ){
 
-    return;
+      await LifeOSNotifications
+        .requestNotifications();
 
-  }
+      return;
+
+    }
 
 
-  if(!("Notification" in window)){
+    if(
+      !("Notification" in window)
+    ){
 
-    toast(
-      "Este navegador no admite notificaciones"
+      toast(
+        "Este navegador no admite notificaciones."
+      );
+
+      return;
+
+    }
+
+
+    const permission =
+      await Notification
+        .requestPermission();
+
+
+    if(
+      permission ===
+      "granted"
+    ){
+
+      toast(
+        "Notificaciones activadas."
+      );
+
+
+      if(
+        window.LifeOSNotifications
+      ){
+
+        LifeOSNotifications
+          .startNotifications();
+
+      }
+
+    }
+
+
+    updateNotificationStatus();
+
+  }catch(error){
+
+    console.error(
+      error
     );
 
-    return;
-
-  }
-
-
-  const p=
-    await Notification.requestPermission();
-
-
-  if(p==="granted"){
-
     toast(
-      "Notificaciones activadas"
+      "No se pudieron activar las notificaciones."
     );
 
-
-    if(window.LifeOSNotifications)
-      LifeOSNotifications.startNotifications();
-
   }
-
-
-  updateNotificationStatus();
 
 }
 
 
 function updateNotificationStatus(){
 
-  if(window.LifeOSNotifications){
+  const element =
+    document.getElementById(
+      "notifyStatus"
+    );
+
+
+  if(!element)
+    return;
+
+
+  if(
+    window.LifeOSNotifications
+  ){
 
     LifeOSNotifications
       .updateNotificationStatus();
@@ -1560,19 +3012,13 @@ function updateNotificationStatus(){
   }
 
 
-  const e=
-    document.getElementById(
-      "notifyStatus"
-    );
-
-
-  if(!e)return;
-
-
-  e.textContent=
-    "Notification"in window
-    ?"Estado: "+Notification.permission
-    :"Este navegador no admite notificaciones web.";
+  element.textContent =
+    "Notification" in window
+    ?
+    "Estado: " +
+    Notification.permission
+    :
+    "Este navegador no admite notificaciones web.";
 
 }
 
@@ -1581,15 +3027,34 @@ function updateNotificationStatus(){
    TOAST
    ========================================================= */
 
-function toast(msg){
+function toast(
+  message
+){
 
-  const e=
-    document.getElementById("toast");
+  const element =
+    document.getElementById(
+      "toast"
+    );
 
 
-  e.textContent=msg;
+  if(!element){
 
-  e.classList.add("show");
+    console.log(
+      message
+    );
+
+    return;
+
+  }
+
+
+  element.textContent =
+    message;
+
+
+  element.classList.add(
+    "show"
+  );
 
 
   clearTimeout(
@@ -1597,10 +3062,25 @@ function toast(msg){
   );
 
 
-  window.__toast=
+  window.__toast =
     setTimeout(
-      ()=>e.classList.remove("show"),
+      function(){
+
+        element.classList.remove(
+          "show"
+        );
+
+      },
       2200
     );
 
 }
+
+
+/* =========================================================
+   EXPORTACIÓN
+   ========================================================= */
+
+console.log(
+  "LifeOS app.js cargado correctamente."
+);
