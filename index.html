@@ -1,186 +1,429 @@
 <!doctype html>
 <html lang="es">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <meta name="theme-color" content="#171323">
-<meta name="description" content="LifeOS — organiza tu vida, gana XP y personaliza tu progreso.">
+
+<meta
+  name="description"
+  content="LifeOS — organiza tu vida, gana XP y personaliza tu progreso."
+>
+
 <title>LifeOS</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="styles.css">
+
 </head>
 
 <body>
 
 <div class="app">
 
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
   <header class="topbar">
+
     <div>
-      <span class="brand">LIFEOS</span>
-      <h1 id="hello">Buenos días 👋</h1>
+
+      <span class="brand">
+        LIFEOS
+      </span>
+
+      <h1 id="hello">
+        Buenos días 👋
+      </h1>
+
       <p id="todayLabel"></p>
+
     </div>
 
-    <button class="profile-chip" id="settingsBtn">Q</button>
+    <button
+      class="profile-chip"
+      id="settingsBtn"
+      type="button"
+    >
+      Q
+    </button>
+
   </header>
+
+
+  <!-- =====================================================
+       MAIN
+       ===================================================== -->
 
   <main>
 
-    <section class="screen active" id="homeScreen">
+
+    <!-- ===================================================
+         HOME
+         =================================================== -->
+
+    <section
+      class="screen active"
+      id="homeScreen"
+    >
 
       <div class="hero">
 
         <div class="hero-copy">
-          <span class="mini">TU PROGRESO</span>
+
+          <span class="mini">
+            TU PROGRESO
+          </span>
 
           <div class="level-line">
-            <b id="level">1</b>
-            <span>Nivel</span>
+
+            <b id="level">
+              1
+            </b>
+
+            <span>
+              Nivel
+            </span>
+
           </div>
 
           <div class="xp-line">
-            <span id="xpText">0 / 100 XP</span>
-            <span id="streak">🔥 0</span>
+
+            <span id="xpText">
+              0 / 100 XP
+            </span>
+
+            <span id="streak">
+              🔥 0
+            </span>
+
           </div>
 
           <div class="progress">
+
             <i id="xpBar"></i>
+
           </div>
+
         </div>
 
-        <div class="hero-orb">✦</div>
+
+        <div class="hero-orb">
+          ✦
+        </div>
 
       </div>
 
+
+      <!-- QUICK ACTIONS -->
 
       <div class="quick-grid">
 
-        <button class="quick-card focus" data-screen="focusScreen">
-          <span>🧠</span>
-          <b>Enfoque</b>
-          <small>Gana XP por concentrarte</small>
+        <button
+          type="button"
+          class="quick-card focus"
+          data-screen="focusScreen"
+        >
+
+          <span>
+            🧠
+          </span>
+
+          <b>
+            Enfoque
+          </b>
+
+          <small>
+            Gana XP por concentrarte
+          </small>
+
         </button>
 
-        <button class="quick-card" data-screen="scheduleScreen">
-          <span>📅</span>
-          <b>Horario</b>
-          <small>Tu semana organizada</small>
+
+        <button
+          type="button"
+          class="quick-card"
+          data-screen="scheduleScreen"
+        >
+
+          <span>
+            📅
+          </span>
+
+          <b>
+            Horario
+          </b>
+
+          <small>
+            Tu semana organizada
+          </small>
+
         </button>
 
-        <button class="quick-card" data-screen="tasksScreen">
-          <span>✓</span>
-          <b>Objetivos</b>
-          <small>Completa y gana XP</small>
+
+        <button
+          type="button"
+          class="quick-card"
+          data-screen="tasksScreen"
+        >
+
+          <span>
+            ✓
+          </span>
+
+          <b>
+            Objetivos
+          </b>
+
+          <small>
+            Completa y gana XP
+          </small>
+
         </button>
 
-        <button class="quick-card" data-screen="storeScreen">
-          <span>✦</span>
-          <b>Personalizar</b>
-          <small>Skins y temas</small>
+
+        <button
+          type="button"
+          class="quick-card"
+          data-screen="storeScreen"
+        >
+
+          <span>
+            ✦
+          </span>
+
+          <b>
+            Personalizar
+          </b>
+
+          <small>
+            Skins y temas
+          </small>
+
         </button>
 
       </div>
 
+
+      <!-- NEXT -->
 
       <div class="section-title">
 
         <div>
-          <span class="mini">A CONTINUACIÓN</span>
-          <h2>Tu día</h2>
+
+          <span class="mini">
+            A CONTINUACIÓN
+          </span>
+
+          <h2>
+            Tu día
+          </h2>
+
         </div>
 
-        <button class="link" data-screen="scheduleScreen">
+        <button
+          type="button"
+          class="link"
+          data-screen="scheduleScreen"
+        >
           Ver horario
         </button>
 
       </div>
 
+
       <div id="nextClass"></div>
 
+
+      <!-- TASKS -->
 
       <div class="section-title">
 
         <div>
-          <span class="mini">MISIONES</span>
-          <h2>Objetivos de hoy</h2>
+
+          <span class="mini">
+            MISIONES
+          </span>
+
+          <h2>
+            Objetivos de hoy
+          </h2>
+
         </div>
 
-        <button class="round" id="newTask">+</button>
+        <button
+          type="button"
+          class="round"
+          id="newTask"
+        >
+          +
+        </button>
 
       </div>
 
-      <div id="homeTasks" class="list"></div>
+
+      <div
+        id="homeTasks"
+        class="list"
+      ></div>
 
     </section>
 
 
-    <section class="screen" id="scheduleScreen">
+    <!-- ===================================================
+         SCHEDULE
+         =================================================== -->
+
+    <section
+      class="screen"
+      id="scheduleScreen"
+    >
 
       <div class="screen-head">
 
         <div>
-          <span class="mini">PLANIFICA</span>
-          <h2>Mi horario</h2>
+
+          <span class="mini">
+            PLANIFICA
+          </span>
+
+          <h2>
+            Mi horario
+          </h2>
+
         </div>
+
 
         <div class="actions">
-          <button class="soft" id="pdfBtn">PDF</button>
-          <button class="primary" id="newClass">+ Clase</button>
+
+          <button
+            type="button"
+            class="soft"
+            id="pdfBtn"
+          >
+            PDF
+          </button>
+
+          <button
+            type="button"
+            class="primary"
+            id="newClass"
+          >
+            + Clase
+          </button>
+
         </div>
 
       </div>
 
-      <div class="days" id="days"></div>
 
-      <div id="scheduleList" class="list"></div>
+      <div
+        class="days"
+        id="days"
+      ></div>
+
+
+      <div
+        id="scheduleList"
+        class="list"
+      ></div>
 
     </section>
 
 
-    <section class="screen" id="tasksScreen">
+    <!-- ===================================================
+         TASKS
+         =================================================== -->
+
+    <section
+      class="screen"
+      id="tasksScreen"
+    >
 
       <div class="screen-head">
 
         <div>
-          <span class="mini">PROGRESO REAL</span>
-          <h2>Mis objetivos</h2>
+
+          <span class="mini">
+            PROGRESO REAL
+          </span>
+
+          <h2>
+            Mis objetivos
+          </h2>
+
         </div>
 
-        <button class="primary" id="newTask2">
+
+        <button
+          type="button"
+          class="primary"
+          id="newTask2"
+        >
           + Objetivo
         </button>
 
       </div>
 
+
       <div class="filters">
 
-        <button class="filter active" data-filter="all">
+        <button
+          type="button"
+          class="filter active"
+          data-filter="all"
+        >
           Todos
         </button>
 
-        <button class="filter" data-filter="pending">
+        <button
+          type="button"
+          class="filter"
+          data-filter="pending"
+        >
           Pendientes
         </button>
 
-        <button class="filter" data-filter="done">
+        <button
+          type="button"
+          class="filter"
+          data-filter="done"
+        >
           Completados
         </button>
 
       </div>
 
-      <div id="tasksList" class="list"></div>
+
+      <div
+        id="tasksList"
+        class="list"
+      ></div>
 
     </section>
 
 
-    <section class="screen" id="focusScreen">
+    <!-- ===================================================
+         FOCUS
+         =================================================== -->
+
+    <section
+      class="screen"
+      id="focusScreen"
+    >
 
       <div class="focus-head">
 
-        <span class="mini">MODO ENFOQUE</span>
+        <span class="mini">
+          MODO ENFOQUE
+        </span>
 
-        <h2>Concéntrate.</h2>
+        <h2>
+          Concéntrate.
+        </h2>
 
         <p>
           Elige una duración, empieza una sesión y gana XP según el tiempo completado.
@@ -194,8 +437,15 @@
         <div class="timer-ring">
 
           <div>
-            <strong id="timer">25:00</strong>
-            <small id="timerState">Listo para empezar</small>
+
+            <strong id="timer">
+              25:00
+            </strong>
+
+            <small id="timerState">
+              Listo para empezar
+            </small>
+
           </div>
 
         </div>
@@ -210,30 +460,54 @@
 
         <div class="duration-row">
 
-          <button data-min="25" class="duration active">
+          <button
+            type="button"
+            data-min="25"
+            class="duration active"
+          >
             25m
           </button>
 
-          <button data-min="45" class="duration">
+          <button
+            type="button"
+            data-min="45"
+            class="duration"
+          >
             45m
           </button>
 
-          <button data-min="60" class="duration">
+          <button
+            type="button"
+            data-min="60"
+            class="duration"
+          >
             60m
           </button>
 
-          <button data-min="90" class="duration">
+          <button
+            type="button"
+            data-min="90"
+            class="duration"
+          >
             90m
           </button>
 
-          <button data-min="120" class="duration">
+          <button
+            type="button"
+            data-min="120"
+            class="duration"
+          >
             2h
           </button>
 
         </div>
 
 
-        <button class="primary big" id="focusStart">
+        <button
+          type="button"
+          class="primary big"
+          id="focusStart"
+        >
           Comenzar enfoque
         </button>
 
@@ -243,18 +517,41 @@
       <div class="stats-strip">
 
         <div>
-          <b id="focusToday">0m</b>
-          <small>Hoy</small>
+
+          <b id="focusToday">
+            0m
+          </b>
+
+          <small>
+            Hoy
+          </small>
+
         </div>
 
-        <div>
-          <b id="focusWeek">0m</b>
-          <small>Esta semana</small>
-        </div>
 
         <div>
-          <b id="focusXP">0</b>
-          <small>XP ganada</small>
+
+          <b id="focusWeek">
+            0m
+          </b>
+
+          <small>
+            Esta semana
+          </small>
+
+        </div>
+
+
+        <div>
+
+          <b id="focusXP">
+            0
+          </b>
+
+          <small>
+            XP ganada
+          </small>
+
         </div>
 
       </div>
@@ -262,13 +559,27 @@
     </section>
 
 
-    <section class="screen" id="storeScreen">
+    <!-- ===================================================
+         STORE
+         =================================================== -->
+
+    <section
+      class="screen"
+      id="storeScreen"
+    >
 
       <div class="screen-head">
 
         <div>
-          <span class="mini">LIFEOS STORE</span>
-          <h2>Personaliza tu mundo</h2>
+
+          <span class="mini">
+            LIFEOS STORE
+          </span>
+
+          <h2>
+            Personaliza tu mundo
+          </h2>
+
         </div>
 
       </div>
@@ -276,7 +587,9 @@
 
       <div class="balance">
 
-        <span>Tu XP disponible</span>
+        <span>
+          Tu XP disponible
+        </span>
 
         <b id="storeXP">
           0 XP
@@ -287,33 +600,62 @@
 
       <div class="store-tabs">
 
-        <button class="store-tab active" data-store="themes">
+        <button
+          type="button"
+          class="store-tab active"
+          data-store="themes"
+        >
           Temas
         </button>
 
-        <button class="store-tab" data-store="effects">
+        <button
+          type="button"
+          class="store-tab"
+          data-store="effects"
+        >
           Efectos
         </button>
 
-        <button class="store-tab" data-store="avatars">
+        <button
+          type="button"
+          class="store-tab"
+          data-store="avatars"
+        >
           Avatares
         </button>
 
       </div>
 
 
-      <div id="storeItems" class="store-grid"></div>
+      <div
+        id="storeItems"
+        class="store-grid"
+      ></div>
 
     </section>
 
 
-    <section class="screen" id="settingsScreen">
+    <!-- ===================================================
+         SETTINGS
+         =================================================== -->
+
+    <section
+      class="screen"
+      id="settingsScreen"
+    >
 
       <div class="screen-head">
 
         <div>
-          <span class="mini">PERSONALIZA</span>
-          <h2>Configuración</h2>
+
+          <span class="mini">
+            PERSONALIZA
+          </span>
+
+          <h2>
+            Configuración
+          </h2>
+
         </div>
 
       </div>
@@ -321,6 +663,8 @@
 
       <div class="settings-list">
 
+
+        <!-- PROFILE -->
 
         <div class="setting-group">
 
@@ -330,16 +674,19 @@
 
 
           <label>
+
             Nombre
 
             <input
               id="nameInput"
               maxlength="30"
             >
+
           </label>
 
 
           <label>
+
             ¿Cómo quieres que te llame LifeOS?
 
             <input
@@ -347,10 +694,13 @@
               maxlength="30"
               placeholder="Ej. Q, Quevedo, jefe..."
             >
+
           </label>
 
         </div>
 
+
+        <!-- NOTIFICATIONS -->
 
         <div class="setting-group">
 
@@ -416,6 +766,8 @@
         </div>
 
 
+        <!-- APPEARANCE -->
+
         <div class="setting-group">
 
           <span class="mini">
@@ -460,6 +812,8 @@
         </div>
 
 
+        <!-- DATA -->
+
         <div class="setting-group">
 
           <span class="mini">
@@ -468,6 +822,7 @@
 
 
           <button
+            type="button"
             class="soft wide"
             id="notifyBtn"
           >
@@ -476,6 +831,7 @@
 
 
           <button
+            type="button"
             class="danger wide"
             id="resetBtn"
           >
@@ -492,6 +848,7 @@
 
 
         <button
+          type="button"
           class="primary wide"
           id="saveSettings"
         >
@@ -505,56 +862,104 @@
   </main>
 
 
+  <!-- =====================================================
+       BOTTOM NAVIGATION
+       ===================================================== -->
+
   <nav class="nav">
 
     <button
+      type="button"
       class="nav-item active"
       data-screen="homeScreen"
     >
-      <span>⌂</span>
-      <small>Inicio</small>
+
+      <span>
+        ⌂
+      </span>
+
+      <small>
+        Inicio
+      </small>
+
     </button>
 
 
     <button
+      type="button"
       class="nav-item"
       data-screen="scheduleScreen"
     >
-      <span>▦</span>
-      <small>Horario</small>
+
+      <span>
+        ▦
+      </span>
+
+      <small>
+        Horario
+      </small>
+
     </button>
 
 
     <button
+      type="button"
       class="nav-item"
       data-screen="tasksScreen"
     >
-      <span>✓</span>
-      <small>Objetivos</small>
+
+      <span>
+        ✓
+      </span>
+
+      <small>
+        Objetivos
+      </small>
+
     </button>
 
 
     <button
+      type="button"
       class="nav-item"
       data-screen="focusScreen"
     >
-      <span>◉</span>
-      <small>Enfoque</small>
+
+      <span>
+        ◉
+      </span>
+
+      <small>
+        Enfoque
+      </small>
+
     </button>
 
 
     <button
+      type="button"
       class="nav-item"
       data-screen="storeScreen"
     >
-      <span>✦</span>
-      <small>Skins</small>
+
+      <span>
+        ✦
+      </span>
+
+      <small>
+        Skins
+      </small>
+
     </button>
 
   </nav>
 
 </div>
 
+
+<!-- =====================================================
+     MODAL
+     ===================================================== -->
 
 <div
   class="modal hidden"
@@ -567,7 +972,10 @@
 
       <h3 id="modalTitle"></h3>
 
-      <button id="closeModal">
+      <button
+        type="button"
+        id="closeModal"
+      >
         ×
       </button>
 
@@ -579,6 +987,10 @@
 
 </div>
 
+
+<!-- =====================================================
+     TOAST
+     ===================================================== -->
 
 <div
   class="toast"
@@ -594,7 +1006,7 @@
 
 
 <!-- =====================================================
-     LIFEOS
+     LIFEOS FILES
      ===================================================== -->
 
 <script src="storage.js"></script>
@@ -602,20 +1014,32 @@
 <script src="schedule.js"></script>
 <script src="notifications.js"></script>
 <script src="pdf.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="app.js"></script>
 
 
+<!-- =====================================================
+     SERVICE WORKER
+     ===================================================== -->
+
 <script>
+
 if("serviceWorker" in navigator){
+
   window.addEventListener("load",()=>{
+
     navigator.serviceWorker
       .register("sw.js")
-      .catch(console.error);
+      .catch(error=>{
+        console.error(
+          "Error registrando Service Worker:",
+          error
+        );
+      });
+
   });
+
 }
+
 </script>
 
 </body>
