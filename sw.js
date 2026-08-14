@@ -1,1 +1,232 @@
-const CACHE="lifeos-flat-v2";const ASSETS=["./","./index.html","./styles.css","./storage.js","./xp.js","./schedule.js","./notifications.js","./pdf.js","./app.js","./manifest.json","./icon-192.png","./icon-512.png"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.match(e.request).then(x=>x||fetch(e.request).then(r=>{const c=r.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));return r}).catch(()=>caches.match("./index.html"))))});
+const CACHE = "lifeos-flat-v3";
+
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./styles.css",
+  "./storage.js",
+  "./xp.js",
+  "./schedule.js",
+  "./notifications.js",
+  "./pdf.js",
+  "./app.js",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
+];
+
+
+/* =========================================================
+   INSTALL
+========================================================= */
+
+self.addEventListener(
+  "install",
+  event => {
+    event.waitUntil(
+      caches
+        .open(CACHE)
+        .then(cache =>
+          cache.addAll(ASSETS)
+        )
+    );
+
+    self.skipWaiting();
+  }
+);
+
+
+/* =========================================================
+   ACTIVATE
+========================================================= */
+
+self.addEventListener(
+  "activate",
+  event => {
+    event.waitUntil(
+      caches
+        .keys()
+        .then(keys =>
+          Promise.all(
+            keys
+              .filter(
+                key =>
+                  key !== CACHE
+              )
+              .map(
+                key =>
+                  caches.delete(key)
+              )
+          )
+        )
+    );
+
+    self.clients.claim();
+  }
+);
+
+
+/* =========================================================
+   FETCH
+========================================================= */
+
+self.addEventListener(
+  "fetch",
+  event => {
+    if (
+      event.request.method !==
+      "GET"
+    ) {
+      return;
+    }
+
+    event.respondWith(
+      caches
+        .match(event.request)
+        .then(cached => {
+          if (cached) {
+            return cached;
+          }
+
+          return fetch(
+            event.request
+          )
+            .then(response => {
+              const copy =
+                response.clone();
+
+              caches
+                .open(CACHE)
+                .then(cache =>
+                  cache.put(
+                    event.request,
+                    copy
+                  )
+                );
+
+              return response;
+            })
+            .catch(() =>
+              caches.match(
+                "./index.html"
+              )
+            );
+        })
+    );
+  }
+);
+
+
+/* =========================================================
+   PUSH
+========================================================= */
+
+self.addEventListener(
+  "push",
+  event => {
+    let data = {};
+
+    try {
+      data =
+        event.data
+          ? event.data.json()
+          : {};
+    } catch {
+      data = {
+        title: "LifeOS",
+        body:
+          event.data
+            ? event.data.text()
+            : "Tienes una notificación."
+      };
+    }
+
+    const title =
+      data.title ||
+      "LifeOS";
+
+    const options = {
+      body:
+        data.body ||
+        "Tienes una nueva notificación.",
+
+      icon:
+        data.icon ||
+        "./icon-192.png",
+
+      badge:
+        data.badge ||
+        "./icon-192.png",
+
+      tag:
+        data.tag ||
+        "lifeos-notification",
+
+      renotify:
+        data.renotify ?? true,
+
+      data:
+        data.data || {
+          url: "./"
+        },
+
+      vibrate: [
+        200,
+        100,
+        200
+      ]
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(
+        title,
+        options
+      )
+    );
+  }
+);
+
+
+/* =========================================================
+   CLICK
+========================================================= */
+
+self.addEventListener(
+  "notificationclick",
+  event => {
+    event.notification.close();
+
+    const url =
+      event.notification?.data?.url ||
+      "./";
+
+    event.waitUntil(
+      clients
+        .matchAll({
+          type: "window",
+          includeUncontrolled: true
+        })
+        .then(clientList => {
+          for (
+            const client
+            of clientList
+          ) {
+            if (
+              "focus" in client
+            ) {
+              client.navigate(url);
+              return client.focus();
+            }
+          }
+
+          if (
+            clients.openWindow
+          ) {
+            return clients.openWindow(
+              url
+            );
+          }
+        })
+    );
+  }
+);
