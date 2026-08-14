@@ -32,25 +32,38 @@ const AVATARS=[
 const SUPABASE_URL="https://wqfsgzpgshdvyjsnmqds.supabase.co";
 
 /*
-   PEGA AQUÍ TU PUBLISHABLE KEY DE SUPABASE.
+   IMPORTANTE:
+   Aquí va SOLO tu Publishable Key.
 
-   Si tu proyecto todavía utiliza "anon public key",
-   puedes colocar esa misma clave aquí.
+   NO pongas aquí:
+   - sb_secret_...
+   - service_role
+   - ninguna clave secreta
 */
-const SUPABASE_ANON_KEY="PEGA_AQUI_TU_PUBLISHABLE_O_ANON_KEY";
-
+const SUPABASE_PUBLISHABLE_KEY="BIb4lQOoZdclzLLiryHnCCvhNaiSwLtcZSjnGHdADqUsdaNPv0_MkX6nfEjs8Ogo5P_Ya47v3XYDTYeQpb50He0";
 
 let supabaseClient=null;
 
 function initSupabase(){
+
   if(
     typeof window.supabase!=="undefined" &&
-    SUPABASE_ANON_KEY &&
-    SUPABASE_ANON_KEY!=="PEGA_AQUI_TU_PUBLISHABLE_O_ANON_KEY"
+    SUPABASE_PUBLISHABLE_KEY &&
+    SUPABASE_PUBLISHABLE_KEY!=="BIb4lQOoZdclzLLiryHnCCvhNaiSwLtcZSjnGHdADqUsdaNPv0_MkX6nfEjs8Ogo5P_Ya47v3XYDTYeQpb50He0"
   ){
-    supabaseClient=window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+
+    supabaseClient=
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+
+    console.log("Supabase conectado correctamente.");
+
+  }else{
+
+    console.warn(
+      "Supabase no está inicializado. Comprueba que el SDK esté cargado y que hayas colocado la Publishable Key."
     );
   }
 }
@@ -61,6 +74,7 @@ function initSupabase(){
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded",()=>{
+
   initSupabase();
 
   updateStreak();
@@ -69,15 +83,20 @@ document.addEventListener("DOMContentLoaded",()=>{
   render();
 
   if(window.LifeOSNotifications){
+
     LifeOSNotifications.updateNotificationStatus();
 
     if(
       "Notification" in window &&
       Notification.permission==="granted"
     ){
+
       LifeOSNotifications.startNotifications();
+
     }
+
   }
+
 });
 
 
@@ -86,43 +105,68 @@ document.addEventListener("DOMContentLoaded",()=>{
    ========================================================= */
 
 function bind(){
+
   document.querySelectorAll("[data-screen]").forEach(
     b=>b.onclick=()=>showScreen(b.dataset.screen)
   );
 
-  document.getElementById("settingsBtn").onclick=()=>showScreen("settingsScreen");
+  document.getElementById("settingsBtn").onclick=
+    ()=>showScreen("settingsScreen");
 
-  document.getElementById("newClass").onclick=()=>{
-    openModal("Nueva clase",classForm());
-  };
+  document.getElementById("newClass").onclick=
+    ()=>{
+      openModal(
+        "Nueva clase",
+        classForm()
+      );
+    };
 
   document.getElementById("newTask").onclick=
-  document.getElementById("newTask2").onclick=()=>{
-    openModal("Nuevo objetivo",taskForm());
-  };
+  document.getElementById("newTask2").onclick=
+    ()=>{
+      openModal(
+        "Nuevo objetivo",
+        taskForm()
+      );
+    };
 
-  document.getElementById("pdfBtn").onclick=exportPDF;
+  document.getElementById("pdfBtn").onclick=
+    exportPDF;
 
-  document.getElementById("closeModal").onclick=closeModal;
+  document.getElementById("closeModal").onclick=
+    closeModal;
 
-  document.getElementById("notifyBtn").onclick=requestNotifications;
+  document.getElementById("notifyBtn").onclick=
+    requestNotifications;
 
-  document.getElementById("saveSettings").onclick=saveSettings;
+  document.getElementById("saveSettings").onclick=
+    saveSettings;
 
-  document.getElementById("resetBtn").onclick=()=>{
-    if(confirm("¿Borrar todos los datos?")){
-      LifeOS.reset();
-      render();
-      toast("LifeOS restablecido");
-    }
-  };
+  document.getElementById("resetBtn").onclick=
+    ()=>{
+      if(confirm("¿Borrar todos los datos?")){
+
+        LifeOS.reset();
+
+        render();
+
+        toast(
+          "LifeOS restablecido"
+        );
+      }
+    };
 
   document.querySelectorAll("[data-filter]").forEach(
     b=>b.onclick=()=>{
-      taskFilter=b.dataset.filter;
+
+      taskFilter=
+        b.dataset.filter;
 
       document.querySelectorAll("[data-filter]").forEach(
-        x=>x.classList.toggle("active",x===b)
+        x=>x.classList.toggle(
+          "active",
+          x===b
+        )
       );
 
       renderTasks();
@@ -131,30 +175,45 @@ function bind(){
 
   document.querySelectorAll(".duration").forEach(
     b=>b.onclick=()=>{
+
       if(timerRunning)return;
 
-      focusMinutes=+b.dataset.min;
-      timerLeft=focusMinutes*60;
+      focusMinutes=
+        +b.dataset.min;
+
+      timerLeft=
+        focusMinutes*60;
 
       document.querySelectorAll(".duration").forEach(
-        x=>x.classList.toggle("active",x===b)
+        x=>x.classList.toggle(
+          "active",
+          x===b
+        )
       );
 
       updateTimer();
     }
   );
 
-  document.getElementById("focusStart").onclick=toggleFocus;
+  document.getElementById("focusStart").onclick=
+    toggleFocus;
 
   document.querySelectorAll(".store-tab").forEach(
     b=>b.onclick=()=>{
+
       document.querySelectorAll(".store-tab").forEach(
-        x=>x.classList.toggle("active",x===b)
+        x=>x.classList.toggle(
+          "active",
+          x===b
+        )
       );
 
-      renderStore(b.dataset.store);
+      renderStore(
+        b.dataset.store
+      );
     }
   );
+
 }
 
 
@@ -163,12 +222,19 @@ function bind(){
    ========================================================= */
 
 function showScreen(id){
+
   document.querySelectorAll(".screen").forEach(
-    x=>x.classList.toggle("active",x.id===id)
+    x=>x.classList.toggle(
+      "active",
+      x.id===id
+    )
   );
 
   document.querySelectorAll(".nav-item").forEach(
-    x=>x.classList.toggle("active",x.dataset.screen===id)
+    x=>x.classList.toggle(
+      "active",
+      x.dataset.screen===id
+    )
   );
 
   scrollTo(0,0);
@@ -180,6 +246,7 @@ function showScreen(id){
    ========================================================= */
 
 function render(){
+
   renderHeader();
   renderXP();
   renderHome();
@@ -188,11 +255,14 @@ function render(){
   renderStore("themes");
   renderSettings();
   renderFocusStats();
+
 }
 
 
 function renderHeader(){
-  const h=new Date().getHours();
+
+  const h=
+    new Date().getHours();
 
   const name=
     LifeOS.state.profile.nickname||
@@ -200,7 +270,13 @@ function renderHeader(){
     "ahí";
 
   document.getElementById("hello").textContent=
-    `${h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches"}, ${name} 👋`;
+    `${
+      h<12
+      ?"Buenos días"
+      :h<19
+      ?"Buenas tardes"
+      :"Buenas noches"
+    }, ${name} 👋`;
 
   document.getElementById("todayLabel").textContent=
     new Date().toLocaleDateString(
@@ -211,13 +287,17 @@ function renderHeader(){
         month:"long"
       }
     );
+
 }
 
 
 function renderXP(){
-  const x=levelData();
 
-  document.getElementById("level").textContent=x.level;
+  const x=
+    levelData();
+
+  document.getElementById("level").textContent=
+    x.level;
 
   document.getElementById("xpText").textContent=
     `${x.current} / ${x.need} XP`;
@@ -230,6 +310,7 @@ function renderXP(){
 
   document.getElementById("storeXP").textContent=
     LifeOS.state.xp+" XP";
+
 }
 
 
@@ -238,9 +319,14 @@ function renderXP(){
    ========================================================= */
 
 function renderHome(){
-  const cs=classesDay(LifeOS.dayIndex());
 
-  const now=new Date();
+  const cs=
+    classesDay(
+      LifeOS.dayIndex()
+    );
+
+  const now=
+    new Date();
 
   const cur=
     now.getHours()*60+
@@ -248,21 +334,31 @@ function renderHome(){
 
   const upcoming=
     cs.find(c=>{
-      const [h,m]=c.start.split(":").map(Number);
+
+      const [h,m]=
+        c.start
+        .split(":")
+        .map(Number);
 
       return h*60+m>=cur;
+
     })||cs[0];
 
   document.getElementById("nextClass").innerHTML=
     upcoming
     ?
     `<div class="card next-card">
+
       <div class="next-time">
-        ${upcoming.start}<br>${upcoming.end}
+        ${upcoming.start}<br>
+        ${upcoming.end}
       </div>
 
       <div class="next-main">
-        <b>${LifeOS.escapeHtml(upcoming.title)}</b>
+
+        <b>
+          ${LifeOS.escapeHtml(upcoming.title)}
+        </b>
 
         <small>
           ${
@@ -277,18 +373,24 @@ function renderHome(){
             :""
           }
         </small>
+
       </div>
 
       <span class="badge">
         🔔 ${reminderText(+upcoming.reminder)}
       </span>
+
     </div>`
+
     :
+
     '<div class="empty">No tienes clases programadas para hoy.</div>';
 
   const ts=
     LifeOS.state.tasks
-      .filter(t=>t.date===LifeOS.today())
+      .filter(
+        t=>t.date===LifeOS.today()
+      )
       .slice(0,4);
 
   document.getElementById("homeTasks").innerHTML=
@@ -299,6 +401,7 @@ function renderHome(){
     '<div class="empty">Tu día está libre. Añade una misión y empieza a ganar XP.</div>';
 
   bindDynamic();
+
 }
 
 
@@ -311,50 +414,81 @@ function renderSchedule(){
   document.getElementById("days").innerHTML=
     DAYS.map(
       (d,i)=>
-        `<button class="${i===selectedDay?"active":""}" data-day="${i}">
+        `<button
+          class="${i===selectedDay?"active":""}"
+          data-day="${i}"
+        >
           ${d.slice(0,3)}
         </button>`
     ).join("");
 
   document.querySelectorAll("[data-day]").forEach(
     b=>b.onclick=()=>{
-      selectedDay=+b.dataset.day;
+
+      selectedDay=
+        +b.dataset.day;
+
       renderSchedule();
+
     }
   );
 
-  const cs=classesDay(selectedDay);
+  const cs=
+    classesDay(selectedDay);
 
   document.getElementById("scheduleList").innerHTML=
     cs.length
     ?
     cs.map(
       c=>
-        `<div class="card schedule-card" data-edit="${c.id}">
+        `<div
+          class="card schedule-card"
+          data-edit="${c.id}"
+        >
+
           <div class="time">
-            ${c.start}<br>${c.end}
+            ${c.start}<br>
+            ${c.end}
           </div>
 
           <div>
+
             <div class="class-name">
               ${LifeOS.escapeHtml(c.title)}
             </div>
 
             <div class="meta">
-              ${c.room?"Sala "+LifeOS.escapeHtml(c.room):""}
-              ${c.teacher?" · "+LifeOS.escapeHtml(c.teacher):""}
+
+              ${
+                c.room
+                ?"Sala "+LifeOS.escapeHtml(c.room)
+                :""
+              }
+
+              ${
+                c.teacher
+                ?" · "+LifeOS.escapeHtml(c.teacher)
+                :""
+              }
+
               · 🔔 ${reminderText(+c.reminder)}
+
             </div>
+
           </div>
 
           <span class="dot"></span>
+
         </div>`
     ).join("")
+
     :
+
     '<div class="empty">No hay clases este día.</div>';
 
   document.querySelectorAll("[data-edit]").forEach(
     e=>e.onclick=()=>{
+
       const c=
         LifeOS.state.classes.find(
           x=>x.id===e.dataset.edit
@@ -365,8 +499,10 @@ function renderSchedule(){
         classForm(c),
         c
       );
+
     }
   );
+
 }
 
 
@@ -375,6 +511,7 @@ function renderSchedule(){
    ========================================================= */
 
 function taskHTML(t){
+
   return `
     <div class="card task">
 
@@ -385,12 +522,19 @@ function taskHTML(t){
         ${t.done?"✓":""}
       </button>
 
-      <div class="task-main ${t.done?"done":""}">
-        <b>${LifeOS.escapeHtml(t.title)}</b>
+      <div
+        class="task-main ${t.done?"done":""}"
+      >
+
+        <b>
+          ${LifeOS.escapeHtml(t.title)}
+        </b>
 
         <small>
-          ${t.date} · ${t.done?"Completado":"Pendiente"}
+          ${t.date} ·
+          ${t.done?"Completado":"Pendiente"}
         </small>
+
       </div>
 
       <span class="xp-pill">
@@ -399,18 +543,26 @@ function taskHTML(t){
 
     </div>
   `;
+
 }
 
 
 function renderTasks(){
 
-  let ts=[...LifeOS.state.tasks];
+  let ts=
+    [...LifeOS.state.tasks];
 
   if(taskFilter==="pending")
-    ts=ts.filter(t=>!t.done);
+    ts=
+      ts.filter(
+        t=>!t.done
+      );
 
   if(taskFilter==="done")
-    ts=ts.filter(t=>t.done);
+    ts=
+      ts.filter(
+        t=>t.done
+      );
 
   document.getElementById("tasksList").innerHTML=
     ts.length
@@ -420,13 +572,19 @@ function renderTasks(){
     '<div class="empty">No hay objetivos en esta vista.</div>';
 
   bindDynamic();
+
 }
 
 
 function bindDynamic(){
+
   document.querySelectorAll("[data-task]").forEach(
-    b=>b.onclick=()=>toggleTask(b.dataset.task)
+    b=>b.onclick=()=>
+      toggleTask(
+        b.dataset.task
+      )
   );
+
 }
 
 
@@ -434,20 +592,29 @@ function bindDynamic(){
    MODALES
    ========================================================= */
 
-function openModal(title,html,existing=null){
+function openModal(
+  title,
+  html,
+  existing=null
+){
 
-  document.getElementById("modalTitle").textContent=title;
+  document.getElementById("modalTitle")
+    .textContent=title;
 
-  const f=document.getElementById("modalForm");
+  const f=
+    document.getElementById("modalForm");
 
   f.innerHTML=html;
 
-  document.getElementById("modal").classList.remove("hidden");
+  document.getElementById("modal")
+    .classList.remove("hidden");
 
   f.onsubmit=async e=>{
+
     e.preventDefault();
 
-    const d=new FormData(f);
+    const d=
+      new FormData(f);
 
     if(
       html.includes('name="title"')&&
@@ -455,24 +622,39 @@ function openModal(title,html,existing=null){
     ){
 
       const data={
+
         title:d.get("title"),
+
         day:+d.get("day"),
+
         room:d.get("room"),
+
         start:d.get("start"),
+
         end:d.get("end"),
+
         teacher:d.get("teacher"),
+
         reminder:+d.get("reminder")
+
       };
 
       if(existing){
 
-        Object.assign(existing,data);
+        Object.assign(
+          existing,
+          data
+        );
 
       }else{
 
         LifeOS.state.classes.push({
-          id:LifeOS.uid("class"),
+
+          id:
+            LifeOS.uid("class"),
+
           ...data
+
         });
 
       }
@@ -480,31 +662,48 @@ function openModal(title,html,existing=null){
       LifeOS.save();
 
       /*
-       * Sincronizamos la clase con Supabase.
-       * La lógica completa de sincronización está
-       * centralizada aquí para no alterar el resto
-       * de la aplicación.
+       * Guardamos las clases también
+       * en Supabase para que la Edge
+       * Function pueda utilizarlas.
        */
       await syncClassesToSupabase();
 
     }else{
 
       const data={
+
         title:d.get("title"),
+
         xp:+d.get("xp"),
+
         date:d.get("date"),
+
         done:false
+
       };
 
-      if(existing)
-        Object.assign(existing,data);
-      else
+      if(existing){
+
+        Object.assign(
+          existing,
+          data
+        );
+
+      }else{
+
         LifeOS.state.tasks.push({
-          id:LifeOS.uid("task"),
+
+          id:
+            LifeOS.uid("task"),
+
           ...data
+
         });
 
+      }
+
       LifeOS.save();
+
     }
 
     closeModal();
@@ -512,10 +711,14 @@ function openModal(title,html,existing=null){
     render();
 
     toast("Guardado");
+
   };
 
   f.querySelector("[data-close]")
-    ?.addEventListener("click",closeModal);
+    ?.addEventListener(
+      "click",
+      closeModal
+    );
 
   if(
     existing&&
@@ -524,6 +727,7 @@ function openModal(title,html,existing=null){
 
     document.getElementById("deleteClass").onclick=
     async ()=>{
+
       LifeOS.state.classes=
         LifeOS.state.classes.filter(
           x=>x.id!==existing.id
@@ -538,92 +742,147 @@ function openModal(title,html,existing=null){
       render();
 
       toast("Clase eliminada");
+
     };
+
   }
+
 }
 
 
 function closeModal(){
+
   document
     .getElementById("modal")
     .classList.add("hidden");
+
 }
 
 
 /* =========================================================
-   SINCRONIZACIÓN DE CLASES CON SUPABASE
+   SUPABASE — CLASES
    ========================================================= */
 
 async function syncClassesToSupabase(){
 
   if(!supabaseClient){
+
     console.warn(
-      "Supabase no está inicializado. Revisa SUPABASE_ANON_KEY."
+      "No se pueden sincronizar las clases porque Supabase no está conectado."
     );
+
     return;
+
   }
 
   try{
 
-    const userResult=
+    const {
+      data:{
+        user
+      },
+      error:userError
+    }=
       await supabaseClient.auth.getUser();
 
-    const user=userResult.data?.user;
+    if(userError)
+      throw userError;
 
-    /*
-     * Si todavía no hay usuario autenticado,
-     * no intentamos insertar.
-     */
     if(!user){
+
       console.warn(
-        "No hay usuario autenticado en Supabase."
+        "No existe una sesión iniciada en Supabase."
       );
+
       return;
+
     }
 
     /*
-     * Eliminamos las clases antiguas del usuario.
+     * Primero eliminamos las clases
+     * existentes del usuario.
      */
-    const deleteResult=
+    const {
+      error:deleteError
+    }=
       await supabaseClient
         .from("classes")
         .delete()
-        .eq("user_id",user.id);
+        .eq(
+          "user_id",
+          user.id
+        );
 
-    if(deleteResult.error)
-      throw deleteResult.error;
+    if(deleteError)
+      throw deleteError;
 
     /*
-     * Insertamos nuevamente las clases actuales.
+     * Si no existen clases locales,
+     * terminamos aquí.
      */
-    if(!LifeOS.state.classes.length)
+    if(
+      !LifeOS.state.classes.length
+    ){
+
+      console.log(
+        "No hay clases para sincronizar."
+      );
+
       return;
 
-    const rows=
-      LifeOS.state.classes.map(c=>({
-        user_id:user.id,
-        title:c.title,
-        day:c.day,
-        start_time:c.start,
-        end_time:c.end,
-        room:c.room||null,
-        teacher:c.teacher||null,
-        reminder_minutes:
-          Number.isFinite(+c.reminder)
-          ?+c.reminder
-          :90
-      }));
+    }
 
-    const insertResult=
+    /*
+     * Convertimos el formato local
+     * al formato de la tabla classes.
+     */
+    const rows=
+      LifeOS.state.classes.map(
+        c=>({
+
+          user_id:
+            user.id,
+
+          title:
+            c.title,
+
+          day:
+            Number(c.day),
+
+          start_time:
+            c.start,
+
+          end_time:
+            c.end,
+
+          room:
+            c.room||null,
+
+          teacher:
+            c.teacher||null,
+
+          reminder_minutes:
+            Number.isFinite(
+              +c.reminder
+            )
+            ?+c.reminder
+            :90
+
+        })
+      );
+
+    const {
+      error:insertError
+    }=
       await supabaseClient
         .from("classes")
         .insert(rows);
 
-    if(insertResult.error)
-      throw insertResult.error;
+    if(insertError)
+      throw insertError;
 
     console.log(
-      "Clases sincronizadas con Supabase."
+      "✓ Clases sincronizadas con Supabase."
     );
 
   }catch(error){
@@ -632,7 +891,13 @@ async function syncClassesToSupabase(){
       "Error sincronizando clases con Supabase:",
       error
     );
+
+    toast(
+      "No se pudo sincronizar con Supabase"
+    );
+
   }
+
 }
 
 
@@ -672,10 +937,14 @@ function toggleTask(id){
 
     LifeOS.save();
 
-    toast(`-${t.xp} XP`);
+    toast(
+      `-${t.xp} XP`
+    );
 
     render();
+
   }
+
 }
 
 
@@ -687,69 +956,97 @@ function toggleFocus(){
 
   if(timerRunning){
 
-    clearInterval(timerInterval);
+    clearInterval(
+      timerInterval
+    );
 
     timerRunning=false;
 
-    document.getElementById("focusStart")
-      .textContent="Continuar enfoque";
+    document.getElementById(
+      "focusStart"
+    ).textContent=
+      "Continuar enfoque";
 
-    document.getElementById("timerState")
-      .textContent="Pausado";
+    document.getElementById(
+      "timerState"
+    ).textContent=
+      "Pausado";
 
     return;
+
   }
 
   timerRunning=true;
 
-  document.getElementById("focusStart")
-    .textContent="Pausar";
+  document.getElementById(
+    "focusStart"
+  ).textContent=
+    "Pausar";
 
-  document.getElementById("timerState")
-    .textContent="Enfoque activo";
+  document.getElementById(
+    "timerState"
+  ).textContent=
+    "Enfoque activo";
 
-  timerInterval=setInterval(
-    ()=>{
-      timerLeft--;
+  timerInterval=
+    setInterval(
+      ()=>{
 
-      updateTimer();
+        timerLeft--;
 
-      if(timerLeft<=0)
-        finishFocus();
-    },
-    1000
-  );
+        updateTimer();
+
+        if(timerLeft<=0)
+          finishFocus();
+
+      },
+      1000
+    );
+
 }
 
 
 function updateTimer(){
 
-  const m=Math.floor(timerLeft/60);
+  const m=
+    Math.floor(
+      timerLeft/60
+    );
 
-  const s=timerLeft%60;
+  const s=
+    timerLeft%60;
 
-  document.getElementById("timer").textContent=
+  document.getElementById(
+    "timer"
+  ).textContent=
     `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 
-  const total=focusMinutes*60;
+  const total=
+    focusMinutes*60;
 
   const deg=
     (1-timerLeft/total)*360;
 
-  document.querySelector(".timer-ring").style.background=
+  document.querySelector(
+    ".timer-ring"
+  ).style.background=
     `conic-gradient(var(--accent) ${deg}deg,#eeeaf6 ${deg}deg)`;
+
 }
 
 
 function finishFocus(){
 
-  clearInterval(timerInterval);
+  clearInterval(
+    timerInterval
+  );
 
   timerRunning=false;
 
   const title=
-    document.getElementById("focusTitle")
-      .value.trim()||
+    document.getElementById(
+      "focusTitle"
+    ).value.trim()||
     "Sesión de enfoque";
 
   const xp=
@@ -758,11 +1055,20 @@ function finishFocus(){
     );
 
   LifeOS.state.focus.push({
-    id:LifeOS.uid("focus"),
-    date:LifeOS.today(),
-    minutes:focusMinutes,
+
+    id:
+      LifeOS.uid("focus"),
+
+    date:
+      LifeOS.today(),
+
+    minutes:
+      focusMinutes,
+
     title,
+
     xp
+
   });
 
   LifeOS.save();
@@ -772,27 +1078,36 @@ function finishFocus(){
     title
   );
 
-  document.getElementById("focusStart")
-    .textContent="Comenzar enfoque";
+  document.getElementById(
+    "focusStart"
+  ).textContent=
+    "Comenzar enfoque";
 
-  document.getElementById("timerState")
-    .textContent="¡Sesión completada!";
+  document.getElementById(
+    "timerState"
+  ).textContent=
+    "¡Sesión completada!";
 
-  timerLeft=focusMinutes*60;
+  timerLeft=
+    focusMinutes*60;
 
   updateTimer();
 
   renderFocusStats();
+
 }
 
 
 function renderFocusStats(){
 
-  const t=LifeOS.today();
+  const t=
+    LifeOS.today();
 
   const today=
     LifeOS.state.focus
-      .filter(x=>x.date===t)
+      .filter(
+        x=>x.date===t
+      )
       .reduce(
         (a,x)=>a+x.minutes,
         0
@@ -812,14 +1127,21 @@ function renderFocusStats(){
         0
       );
 
-  document.getElementById("focusToday")
-    .textContent=today+"m";
+  document.getElementById(
+    "focusToday"
+  ).textContent=
+    today+"m";
 
-  document.getElementById("focusWeek")
-    .textContent=week+"m";
+  document.getElementById(
+    "focusWeek"
+  ).textContent=
+    week+"m";
 
-  document.getElementById("focusXP")
-    .textContent=xp;
+  document.getElementById(
+    "focusXP"
+  ).textContent=
+    xp;
+
 }
 
 
@@ -836,15 +1158,20 @@ function renderStore(type){
     ?EFFECTS
     :AVATARS;
 
-  document.getElementById("storeItems").innerHTML=
+  document.getElementById(
+    "storeItems"
+  ).innerHTML=
+
     items.map(
       i=>{
 
         const unlocked=
-          LifeOS.state.unlocked.includes(i.id);
+          LifeOS.state.unlocked
+            .includes(i.id);
 
         const equipped=
-          LifeOS.state.equipped===i.id;
+          LifeOS.state.equipped===
+          i.id;
 
         return `
           <div class="skin">
@@ -865,7 +1192,9 @@ function renderStore(type){
                 ${i.rarity}
               </span>
 
-              <h3>${i.name}</h3>
+              <h3>
+                ${i.name}
+              </h3>
 
               <p>
                 ${
@@ -875,7 +1204,11 @@ function renderStore(type){
               </p>
 
               <button
-                class="${equipped?"soft":"primary"}"
+                class="${
+                  equipped
+                  ?"soft"
+                  :"primary"
+                }"
                 data-skin="${i.id}"
                 data-cost="${i.cost}"
                 data-type="${type}"
@@ -893,10 +1226,13 @@ function renderStore(type){
 
           </div>
         `;
+
       }
     ).join("");
 
-  document.querySelectorAll("[data-skin]").forEach(
+  document.querySelectorAll(
+    "[data-skin]"
+  ).forEach(
     b=>b.onclick=()=>
       buySkin(
         b.dataset.skin,
@@ -904,34 +1240,52 @@ function renderStore(type){
         b.dataset.type
       )
   );
+
 }
 
 
-function buySkin(id,cost,type){
+function buySkin(
+  id,
+  cost,
+  type
+){
 
-  if(!LifeOS.state.unlocked.includes(id)){
+  if(
+    !LifeOS.state.unlocked
+      .includes(id)
+  ){
 
     if(!spendXP(cost)){
 
       toast(
-        `Te faltan ${cost-LifeOS.state.xp} XP`
+        `Te faltan ${
+          cost-LifeOS.state.xp
+        } XP`
       );
 
       return;
+
     }
 
-    LifeOS.state.unlocked.push(id);
+    LifeOS.state.unlocked
+      .push(id);
 
-    toast("✨ Desbloqueado");
+    toast(
+      "✨ Desbloqueado"
+    );
+
   }
 
   if(type==="themes"){
 
-    LifeOS.state.equipped=id;
+    LifeOS.state.equipped=
+      id;
 
-    LifeOS.state.profile.theme=id;
+    LifeOS.state.profile.theme=
+      id;
 
     applyTheme();
+
   }
 
   LifeOS.save();
@@ -939,6 +1293,7 @@ function buySkin(id,cost,type){
   renderStore(type);
 
   renderXP();
+
 }
 
 
@@ -953,25 +1308,76 @@ function applyTheme(){
 
   const t=
     THEMES.find(
-      x=>x.id===LifeOS.state.equipped
+      x=>x.id===
+      LifeOS.state.equipped
     )||THEMES[0];
 
   const root=
     document.documentElement;
 
   const map={
-    midnight:["#7357e8","#a78cff","#f6f5fb","#24212d"],
-    lavender:["#9272e8","#c1aaff","#f8f5ff","#27222f"],
-    ocean:["#2b8dbb","#68c7ec","#f2fbff","#202c31"],
-    forest:["#258d5a","#62c993","#f2fbf6","#202b24"],
-    sunset:["#e76c5c","#ffad82","#fff7f3","#332522"],
-    cosmos:["#6756df","#a08fff","#f5f3ff","#242033"],
-    aurora:["#2b9c80","#76e0b9","#f1fcf8","#202c29"],
-    glass:["#6094ca","#a8d1ef","#f3f8fd","#202933"]
+
+    midnight:[
+      "#7357e8",
+      "#a78cff",
+      "#f6f5fb",
+      "#24212d"
+    ],
+
+    lavender:[
+      "#9272e8",
+      "#c1aaff",
+      "#f8f5ff",
+      "#27222f"
+    ],
+
+    ocean:[
+      "#2b8dbb",
+      "#68c7ec",
+      "#f2fbff",
+      "#202c31"
+    ],
+
+    forest:[
+      "#258d5a",
+      "#62c993",
+      "#f2fbf6",
+      "#202b24"
+    ],
+
+    sunset:[
+      "#e76c5c",
+      "#ffad82",
+      "#fff7f3",
+      "#332522"
+    ],
+
+    cosmos:[
+      "#6756df",
+      "#a08fff",
+      "#f5f3ff",
+      "#242033"
+    ],
+
+    aurora:[
+      "#2b9c80",
+      "#76e0b9",
+      "#f1fcf8",
+      "#202c29"
+    ],
+
+    glass:[
+      "#6094ca",
+      "#a8d1ef",
+      "#f3f8fd",
+      "#202933"
+    ]
+
   };
 
   const v=
-    map[t.id]||map.midnight;
+    map[t.id]||
+    map.midnight;
 
   root.style.setProperty(
     "--accent",
@@ -1000,8 +1406,12 @@ function applyTheme(){
     t.id==="midnight"||
     t.id==="cosmos"
   ){
-    document.body.style.background="#f6f5fb";
+
+    document.body.style.background=
+      "#f6f5fb";
+
   }
+
 }
 
 
@@ -1011,87 +1421,127 @@ function applyTheme(){
 
 function renderSettings(){
 
-  const p=LifeOS.state.profile;
+  const p=
+    LifeOS.state.profile;
 
-  document.getElementById("nameInput").value=
+  document.getElementById(
+    "nameInput"
+  ).value=
     p.name;
 
-  document.getElementById("nicknameInput").value=
+  document.getElementById(
+    "nicknameInput"
+  ).value=
     p.nickname;
 
-  document.getElementById("reminderInput").value=
+  document.getElementById(
+    "reminderInput"
+  ).value=
     p.reminder;
 
-  document.getElementById("morningInput").checked=
+  document.getElementById(
+    "morningInput"
+  ).checked=
     p.morning;
 
-  document.getElementById("nightInput").checked=
+  document.getElementById(
+    "nightInput"
+  ).checked=
     p.night;
 
-  document.getElementById("animationsInput").checked=
+  document.getElementById(
+    "animationsInput"
+  ).checked=
     p.animations;
 
-  document.getElementById("effectsInput").checked=
+  document.getElementById(
+    "effectsInput"
+  ).checked=
     p.effects;
 
-  document.getElementById("themeSelect").innerHTML=
+  document.getElementById(
+    "themeSelect"
+  ).innerHTML=
+
     THEMES
       .filter(
-        t=>LifeOS.state.unlocked.includes(t.id)
+        t=>
+          LifeOS.state.unlocked
+            .includes(t.id)
       )
       .map(
         t=>
           `<option
             value="${t.id}"
-            ${LifeOS.state.equipped===t.id?"selected":""}
+            ${
+              LifeOS.state.equipped===
+              t.id
+              ?"selected"
+              :""
+            }
           >
             ${t.name}
           </option>`
       )
       .join("");
+
 }
 
 
 function saveSettings(){
 
-  const p=LifeOS.state.profile;
+  const p=
+    LifeOS.state.profile;
 
   p.name=
-    document.getElementById("nameInput")
-      .value.trim();
+    document.getElementById(
+      "nameInput"
+    ).value.trim();
 
   p.nickname=
-    document.getElementById("nicknameInput")
-      .value.trim();
+    document.getElementById(
+      "nicknameInput"
+    ).value.trim();
 
   p.reminder=
-    +document.getElementById("reminderInput")
-      .value;
+    +document.getElementById(
+      "reminderInput"
+    ).value;
 
   p.morning=
-    document.getElementById("morningInput")
-      .checked;
+    document.getElementById(
+      "morningInput"
+    ).checked;
 
   p.night=
-    document.getElementById("nightInput")
-      .checked;
+    document.getElementById(
+      "nightInput"
+    ).checked;
 
   p.animations=
-    document.getElementById("animationsInput")
-      .checked;
+    document.getElementById(
+      "animationsInput"
+    ).checked;
 
   p.effects=
-    document.getElementById("effectsInput")
-      .checked;
+    document.getElementById(
+      "effectsInput"
+    ).checked;
 
   const theme=
-    document.getElementById("themeSelect")
-      .value;
+    document.getElementById(
+      "themeSelect"
+    ).value;
 
   if(
-    LifeOS.state.unlocked.includes(theme)
-  )
-    LifeOS.state.equipped=theme;
+    LifeOS.state.unlocked
+      .includes(theme)
+  ){
+
+    LifeOS.state.equipped=
+      theme;
+
+  }
 
   LifeOS.save();
 
@@ -1099,7 +1549,10 @@ function saveSettings(){
 
   render();
 
-  toast("Configuración guardada");
+  toast(
+    "Configuración guardada"
+  );
+
 }
 
 
@@ -1111,9 +1564,11 @@ async function requestNotifications(){
 
   if(window.LifeOSNotifications){
 
-    await LifeOSNotifications.requestNotifications();
+    await LifeOSNotifications
+      .requestNotifications();
 
     return;
+
   }
 
   if(!("Notification" in window)){
@@ -1123,10 +1578,12 @@ async function requestNotifications(){
     );
 
     return;
+
   }
 
   const p=
-    await Notification.requestPermission();
+    await Notification
+      .requestPermission();
 
   if(p==="granted"){
 
@@ -1135,10 +1592,13 @@ async function requestNotifications(){
     );
 
     if(window.LifeOSNotifications)
-      LifeOSNotifications.startNotifications();
+      LifeOSNotifications
+        .startNotifications();
+
   }
 
   updateNotificationStatus();
+
 }
 
 
@@ -1150,6 +1610,7 @@ function updateNotificationStatus(){
       .updateNotificationStatus();
 
     return;
+
   }
 
   const e=
@@ -1163,6 +1624,7 @@ function updateNotificationStatus(){
     "Notification"in window
     ?"Estado: "+Notification.permission
     :"Este navegador no admite notificaciones web.";
+
 }
 
 
@@ -1173,11 +1635,16 @@ function updateNotificationStatus(){
 function toast(msg){
 
   const e=
-    document.getElementById("toast");
+    document.getElementById(
+      "toast"
+    );
 
-  e.textContent=msg;
+  e.textContent=
+    msg;
 
-  e.classList.add("show");
+  e.classList.add(
+    "show"
+  );
 
   clearTimeout(
     window.__toast
@@ -1188,4 +1655,5 @@ function toast(msg){
       ()=>e.classList.remove("show"),
       2200
     );
+
 }
