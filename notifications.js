@@ -1,71 +1,24 @@
 let notifTimer = null;
 
-const SUPABASE_URL =
-  "https://wqfsgzpgshdvyjsnmqds.supabase.co";
+const VAPID_PUBLIC_KEY =
+  "PEGA_AQUI_TU_VAPID_PUBLIC_KEY";
 
-let supabaseClient = null;
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
 
-/*
- * IMPORTANTE:
- * Si tu index.html ya crea un cliente Supabase global,
- * este archivo intentará reutilizarlo.
- */
+  const base64 = (
+    base64String +
+    padding
+  )
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
 
-async function getSupabaseClient() {
-  if (supabaseClient) {
-    return supabaseClient;
-  }
+  const rawData = atob(base64);
 
-  if (window.supabaseClient) {
-    supabaseClient = window.supabaseClient;
-    return supabaseClient;
-  }
-
-  if (window.supabase) {
-    if (window.SUPABASE_PUBLISHABLE_KEY) {
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        window.SUPABASE_PUBLISHABLE_KEY
-      );
-
-      return supabaseClient;
-    }
-  }
-
-  return null;
+  return Uint8Array.from(
+    [...rawData].map(char => char.charCodeAt(0))
+  );
 }
-
-
-/* =========================================================
-   SERVICE WORKER
-========================================================= */
-
-async function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) {
-    return null;
-  }
-
-  try {
-    const registration =
-      await navigator.serviceWorker.register("./sw.js");
-
-    await navigator.serviceWorker.ready;
-
-    return registration;
-  } catch (error) {
-    console.error(
-      "No se pudo registrar el Service Worker:",
-      error
-    );
-
-    return null;
-  }
-}
-
-
-/* =========================================================
-   NOTIFICACIONES
-========================================================= */
 
 async function requestNotifications() {
   if (!("Notification" in window)) {
@@ -73,30 +26,29 @@ async function requestNotifications() {
     return;
   }
 
-  const permission =
-    await Notification.requestPermission();
+  try {
+    const permission =
+      await Notification.requestPermission();
 
-  updateNotificationStatus();
+    updateNotificationStatus();
 
-  if (permission !== "granted") {
-    toast("Las notificaciones están desactivadas");
-    return;
-  }
+    if (permission !== "granted") {
+      toast("Las notificaciones no fueron activadas");
+      return;
+    }
 
-  const success =
     await registerPushSubscription();
 
-  if (success) {
     toast("🔔 Notificaciones activadas");
-  } else {
-    toast("No se pudo activar el sistema Push");
+
+  } catch (error) {
+    console.error(error);
+    toast("No se pudieron activar las notificaciones");
   }
 }
 
-
 function updateNotificationStatus() {
-  const e =
-    document.getElementById("notifyStatus");
+  const e = document.getElementById("notifyStatus");
 
   if (!e) return;
 
@@ -111,118 +63,40 @@ function updateNotificationStatus() {
     "Estado: " + Notification.permission;
 }
 
-
-/* =========================================================
-   PUSH SUBSCRIPTION
-========================================================= */
-
 async function registerPushSubscription() {
-  try {
-    if (!("serviceWorker" in navigator)) {
-      console.error(
-        "Service Worker no disponible"
-      );
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("Service Worker no disponible");
+  }
 
-      return false;
-    }
+  const registration =
+    await navigator.serviceWorker.ready;
 
-    if (!("PushManager" in window)) {
-      console.error(
-        "Push API no disponible"
-      );
+  let subscription =
+    await registration.pushManager.getSubscription();
 
-      return false;
-    }
-
-    if (
-      !("Notification" in window) ||
-      Notification.permission !== "granted"
-    ) {
-      return false;
-    }
-
-    const client =
-      await getSupabaseClient();
-
-    if (!client) {
-      console.error(
-        "No existe cliente Supabase."
-      );
-
-      return false;
-    }
-
-    const {
-      data: {
-        user
-      },
-      error: authError
-    } = await client.auth.getUser();
-
-    if (authError || !user) {
-      console.error(
-        "No hay usuario autenticado.",
-        authError
-      );
-
-      return false;
-    }
-
-    const registration =
-      await registerServiceWorker();
-
-    if (!registration) {
-      return false;
-    }
-
-    const {
-      data: {
-        publicKey
-      },
-      error: keyError
-    } = await client.functions.invoke(
-      "get-vapid-public-key"
-    );
-
-    if (
-      keyError ||
-      !publicKey
-    ) {
-      console.error(
-        "No se pudo obtener la clave VAPID:",
-        keyError
-      );
-
-      return false;
-    }
-
-    const subscription =
+  if (!subscription) {
+    subscription =
       await registration.pushManager.subscribe({
         userVisibleOnly: true,
 
         applicationServerKey:
-          urlBase64ToUint8Array(publicKey)
+          urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       });
+  }
 
-    const json =
-      subscription.toJSON();
+  const json = subscription.toJSON();
 
-    if (
-      !json.endpoint ||
-      !json.keys ||
-      !json.keys.p256dh ||
-      !json.keys.auth
-    ) {
-      console.error(
-        "La suscripción Push está incompleta."
-      );
+  const user =
+    await LifeOS.getCurrentUser();
 
-      return false;
-    }
+  if (!user) {
+    throw new Error(
+      "No hay usuario autenticado."
+    );
+  }
 
-    const {
-      error
-    } = await client
+  const { error } =
+    await LifeOS.supabase
       .from("push_subscriptions")
       .upsert(
         {
@@ -236,177 +110,41 @@ async function registerPushSubscription() {
         }
       );
 
-    if (error) {
-      console.error(
-        "Error guardando Push subscription:",
-        error
-      );
-
-      return false;
-    }
-
-    return true;
-
-  } catch (error) {
+  if (error) {
     console.error(
-      "Error registrando Push:",
+      "Error guardando suscripción:",
       error
     );
 
-    return false;
+    throw error;
   }
-}
 
-
-/* =========================================================
-   CONVERSIÓN VAPID
-========================================================= */
-
-function urlBase64ToUint8Array(base64String) {
-  const padding =
-    "=".repeat(
-      (4 - (base64String.length % 4)) % 4
-    );
-
-  const base64 =
-    (
-      base64String +
-      padding
-    )
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
-
-  const rawData =
-    atob(base64);
-
-  return Uint8Array.from(
-    [...rawData].map(
-      char => char.charCodeAt(0)
-    )
+  console.log(
+    "Suscripción Push guardada correctamente."
   );
 }
 
-
-/* =========================================================
-   INICIALIZACIÓN
-========================================================= */
-
-async function startNotifications() {
+function startNotifications() {
   clearInterval(notifTimer);
 
-  if (
-    !("Notification" in window) ||
-    Notification.permission !== "granted"
-  ) {
-    return;
-  }
-
-  await registerPushSubscription();
-
-  /*
-   * Dejamos el sistema local como respaldo
-   * mientras el Push remoto queda activo.
-   */
   notifTimer =
     setInterval(
-      checkLocalNotifications,
+      checkNotifications,
       30000
     );
 
-  checkLocalNotifications();
+  checkNotifications();
 }
 
-
-/* =========================================================
-   RESPALDO LOCAL
-========================================================= */
-
-function checkLocalNotifications() {
-  if (
-    !("Notification" in window) ||
-    Notification.permission !== "granted"
-  ) {
-    return;
-  }
-
-  const now = new Date();
-
-  const d =
-    LifeOS.dayIndex();
-
-  const m =
-    now.getHours() * 60 +
-    now.getMinutes();
-
-  const sent =
-    JSON.parse(
-      localStorage.getItem(
-        "lifeos_sent"
-      ) || "{}"
-    );
-
-  LifeOS.state.classes
-    .filter(
-      c => +c.day === d
-    )
-    .forEach(c => {
-      const [
-        h,
-        mi
-      ] =
-        c.start
-          .split(":")
-          .map(Number);
-
-      const target =
-        h * 60 +
-        mi -
-        (
-          +c.reminder ||
-          LifeOS.state.profile.reminder ||
-          90
-        );
-
-      const key =
-        LifeOS.today() +
-        "_" +
-        c.id;
-
-      if (
-        m === target &&
-        !sent[key]
-      ) {
-        new Notification(
-          "LifeOS · Próxima clase",
-          {
-            body:
-              `${c.title} comienza a las ${c.start}. ` +
-              `Faltan ${reminderText(
-                +c.reminder || 90
-              )}.` +
-              (
-                c.room
-                  ? ` Sala ${c.room}.`
-                  : ""
-              )
-          }
-        );
-
-        sent[key] =
-          Date.now();
-
-        localStorage.setItem(
-          "lifeos_sent",
-          JSON.stringify(sent)
-        );
-      }
-    });
+function checkNotifications() {
+  /*
+   * La comprobación real de horarios
+   * ahora la hace Supabase Edge Function.
+   *
+   * Esta función se mantiene para compatibilidad
+   * con LifeOS.
+   */
 }
-
-
-/* =========================================================
-   EXPORTS
-========================================================= */
 
 window.LifeOSNotifications = {
   requestNotifications,
