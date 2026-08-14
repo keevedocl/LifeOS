@@ -6,120 +6,665 @@
 <meta name="theme-color" content="#171323">
 <meta name="description" content="LifeOS — organiza tu vida, gana XP y personaliza tu progreso.">
 <title>LifeOS</title>
+
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 <div class="app">
+
   <header class="topbar">
     <div>
       <span class="brand">LIFEOS</span>
       <h1 id="hello">Buenos días 👋</h1>
       <p id="todayLabel"></p>
     </div>
+
     <button class="profile-chip" id="settingsBtn">Q</button>
   </header>
 
   <main>
+
+    <!-- =========================
+         INICIO
+    ========================== -->
     <section class="screen active" id="homeScreen">
+
       <div class="hero">
         <div class="hero-copy">
           <span class="mini">TU PROGRESO</span>
-          <div class="level-line"><b id="level">1</b><span>Nivel</span></div>
-          <div class="xp-line"><span id="xpText">0 / 100 XP</span><span id="streak">🔥 0</span></div>
-          <div class="progress"><i id="xpBar"></i></div>
+
+          <div class="level-line">
+            <b id="level">1</b>
+            <span>Nivel</span>
+          </div>
+
+          <div class="xp-line">
+            <span id="xpText">0 / 100 XP</span>
+            <span id="streak">🔥 0</span>
+          </div>
+
+          <div class="progress">
+            <i id="xpBar"></i>
+          </div>
         </div>
+
         <div class="hero-orb">✦</div>
       </div>
 
+
       <div class="quick-grid">
-        <button class="quick-card focus" data-screen="focusScreen"><span>🧠</span><b>Enfoque</b><small>Gana XP por concentrarte</small></button>
-        <button class="quick-card" data-screen="scheduleScreen"><span>📅</span><b>Horario</b><small>Tu semana organizada</small></button>
-        <button class="quick-card" data-screen="tasksScreen"><span>✓</span><b>Objetivos</b><small>Completa y gana XP</small></button>
-        <button class="quick-card" data-screen="storeScreen"><span>✦</span><b>Personalizar</b><small>Skins y temas</small></button>
+
+        <button class="quick-card focus" data-screen="focusScreen">
+          <span>🧠</span>
+          <b>Enfoque</b>
+          <small>Gana XP por concentrarte</small>
+        </button>
+
+        <button class="quick-card" data-screen="scheduleScreen">
+          <span>📅</span>
+          <b>Horario</b>
+          <small>Tu semana organizada</small>
+        </button>
+
+        <button class="quick-card" data-screen="tasksScreen">
+          <span>✓</span>
+          <b>Objetivos</b>
+          <small>Completa y gana XP</small>
+        </button>
+
+        <button class="quick-card" data-screen="storeScreen">
+          <span>✦</span>
+          <b>Personalizar</b>
+          <small>Skins y temas</small>
+        </button>
+
       </div>
 
-      <div class="section-title"><div><span class="mini">A CONTINUACIÓN</span><h2>Tu día</h2></div><button class="link" data-screen="scheduleScreen">Ver horario</button></div>
+
+      <div class="section-title">
+        <div>
+          <span class="mini">A CONTINUACIÓN</span>
+          <h2>Tu día</h2>
+        </div>
+
+        <button class="link" data-screen="scheduleScreen">
+          Ver horario
+        </button>
+      </div>
+
       <div id="nextClass"></div>
 
-      <div class="section-title"><div><span class="mini">MISIONES</span><h2>Objetivos de hoy</h2></div><button class="round" id="newTask">+</button></div>
+
+      <div class="section-title">
+        <div>
+          <span class="mini">MISIONES</span>
+          <h2>Objetivos de hoy</h2>
+        </div>
+
+        <button class="round" id="newTask">+</button>
+      </div>
+
       <div id="homeTasks" class="list"></div>
+
     </section>
 
+
+    <!-- =========================
+         HORARIO
+    ========================== -->
     <section class="screen" id="scheduleScreen">
-      <div class="screen-head"><div><span class="mini">PLANIFICA</span><h2>Mi horario</h2></div><div class="actions"><button class="soft" id="pdfBtn">PDF</button><button class="primary" id="newClass">+ Clase</button></div></div>
+
+      <div class="screen-head">
+
+        <div>
+          <span class="mini">PLANIFICA</span>
+          <h2>Mi horario</h2>
+        </div>
+
+        <div class="actions">
+          <button class="soft" id="pdfBtn">
+            PDF
+          </button>
+
+          <button class="primary" id="newClass">
+            + Clase
+          </button>
+        </div>
+
+      </div>
+
       <div class="days" id="days"></div>
+
       <div id="scheduleList" class="list"></div>
+
     </section>
 
+
+    <!-- =========================
+         OBJETIVOS
+    ========================== -->
     <section class="screen" id="tasksScreen">
-      <div class="screen-head"><div><span class="mini">PROGRESO REAL</span><h2>Mis objetivos</h2></div><button class="primary" id="newTask2">+ Objetivo</button></div>
-      <div class="filters"><button class="filter active" data-filter="all">Todos</button><button class="filter" data-filter="pending">Pendientes</button><button class="filter" data-filter="done">Completados</button></div>
+
+      <div class="screen-head">
+
+        <div>
+          <span class="mini">PROGRESO REAL</span>
+          <h2>Mis objetivos</h2>
+        </div>
+
+        <button class="primary" id="newTask2">
+          + Objetivo
+        </button>
+
+      </div>
+
+
+      <div class="filters">
+
+        <button class="filter active" data-filter="all">
+          Todos
+        </button>
+
+        <button class="filter" data-filter="pending">
+          Pendientes
+        </button>
+
+        <button class="filter" data-filter="done">
+          Completados
+        </button>
+
+      </div>
+
+
       <div id="tasksList" class="list"></div>
+
     </section>
 
+
+    <!-- =========================
+         ENFOQUE
+    ========================== -->
     <section class="screen" id="focusScreen">
-      <div class="focus-head"><span class="mini">MODO ENFOQUE</span><h2>Concéntrate.</h2><p>Elige una duración, empieza una sesión y gana XP según el tiempo completado.</p></div>
+
+      <div class="focus-head">
+
+        <span class="mini">MODO ENFOQUE</span>
+
+        <h2>Concéntrate.</h2>
+
+        <p>
+          Elige una duración, empieza una sesión y gana XP según el tiempo completado.
+        </p>
+
+      </div>
+
+
       <div class="timer-card">
-        <div class="timer-ring"><div><strong id="timer">25:00</strong><small id="timerState">Listo para empezar</small></div></div>
-        <input id="focusTitle" maxlength="60" placeholder="¿En qué te vas a enfocar?">
-        <div class="duration-row"><button data-min="25" class="duration active">25m</button><button data-min="45" class="duration">45m</button><button data-min="60" class="duration">60m</button><button data-min="90" class="duration">90m</button><button data-min="120" class="duration">2h</button></div>
-        <button class="primary big" id="focusStart">Comenzar enfoque</button>
+
+        <div class="timer-ring">
+
+          <div>
+            <strong id="timer">25:00</strong>
+
+            <small id="timerState">
+              Listo para empezar
+            </small>
+          </div>
+
+        </div>
+
+
+        <input
+          id="focusTitle"
+          maxlength="60"
+          placeholder="¿En qué te vas a enfocar?"
+        >
+
+
+        <div class="duration-row">
+
+          <button data-min="25" class="duration active">
+            25m
+          </button>
+
+          <button data-min="45" class="duration">
+            45m
+          </button>
+
+          <button data-min="60" class="duration">
+            60m
+          </button>
+
+          <button data-min="90" class="duration">
+            90m
+          </button>
+
+          <button data-min="120" class="duration">
+            2h
+          </button>
+
+        </div>
+
+
+        <button class="primary big" id="focusStart">
+          Comenzar enfoque
+        </button>
+
       </div>
-      <div class="stats-strip"><div><b id="focusToday">0m</b><small>Hoy</small></div><div><b id="focusWeek">0m</b><small>Esta semana</small></div><div><b id="focusXP">0</b><small>XP ganada</small></div></div>
+
+
+      <div class="stats-strip">
+
+        <div>
+          <b id="focusToday">0m</b>
+          <small>Hoy</small>
+        </div>
+
+        <div>
+          <b id="focusWeek">0m</b>
+          <small>Esta semana</small>
+        </div>
+
+        <div>
+          <b id="focusXP">0</b>
+          <small>XP ganada</small>
+        </div>
+
+      </div>
+
     </section>
 
+
+    <!-- =========================
+         STORE
+    ========================== -->
     <section class="screen" id="storeScreen">
-      <div class="screen-head"><div><span class="mini">LIFEOS STORE</span><h2>Personaliza tu mundo</h2></div></div>
-      <div class="balance"><span>Tu XP disponible</span><b id="storeXP">0 XP</b></div>
-      <div class="store-tabs"><button class="store-tab active" data-store="themes">Temas</button><button class="store-tab" data-store="effects">Efectos</button><button class="store-tab" data-store="avatars">Avatares</button></div>
+
+      <div class="screen-head">
+
+        <div>
+          <span class="mini">LIFEOS STORE</span>
+          <h2>Personaliza tu mundo</h2>
+        </div>
+
+      </div>
+
+
+      <div class="balance">
+        <span>Tu XP disponible</span>
+        <b id="storeXP">0 XP</b>
+      </div>
+
+
+      <div class="store-tabs">
+
+        <button
+          class="store-tab active"
+          data-store="themes"
+        >
+          Temas
+        </button>
+
+        <button
+          class="store-tab"
+          data-store="effects"
+        >
+          Efectos
+        </button>
+
+        <button
+          class="store-tab"
+          data-store="avatars"
+        >
+          Avatares
+        </button>
+
+      </div>
+
+
       <div id="storeItems" class="store-grid"></div>
+
     </section>
 
+
+    <!-- =========================
+         CONFIGURACIÓN
+    ========================== -->
     <section class="screen" id="settingsScreen">
-      <div class="screen-head"><div><span class="mini">PERSONALIZA</span><h2>Configuración</h2></div></div>
-      <div class="settings-list">
-        <div class="setting-group"><span class="mini">PERFIL</span>
-          <label>Nombre<input id="nameInput" maxlength="30"></label>
-          <label>¿Cómo quieres que te llame LifeOS?<input id="nicknameInput" maxlength="30" placeholder="Ej. Q, Quevedo, jefe..."></label>
+
+      <div class="screen-head">
+
+        <div>
+          <span class="mini">PERSONALIZA</span>
+          <h2>Configuración</h2>
         </div>
-        <div class="setting-group"><span class="mini">NOTIFICACIONES</span>
-          <label class="row-setting">Recordatorio predeterminado<select id="reminderInput"><option value="15">15 minutos antes</option><option value="30">30 minutos antes</option><option value="60">1 hora antes</option><option value="90">1 hora 30 min antes</option><option value="120">2 horas antes</option></select></label>
-          <label class="row-setting">Resumen de mañana <input type="checkbox" id="morningInput"></label>
-          <label class="row-setting">Resumen nocturno <input type="checkbox" id="nightInput"></label>
-        </div>
-        <div class="setting-group"><span class="mini">APARIENCIA</span>
-          <label>Tema equipado<select id="themeSelect"></select></label>
-          <label class="row-setting">Animaciones <input type="checkbox" id="animationsInput" checked></label>
-          <label class="row-setting">Efectos al ganar XP <input type="checkbox" id="effectsInput" checked></label>
-        </div>
-        <div class="setting-group"><span class="mini">DATOS</span>
-          <button class="soft wide" id="notifyBtn">Activar notificaciones</button>
-          <button class="danger wide" id="resetBtn">Borrar todos mis datos</button>
-          <p id="notifyStatus" class="hint"></p>
-        </div>
-        <button class="primary wide" id="saveSettings">Guardar cambios</button>
+
       </div>
+
+
+      <div class="settings-list">
+
+
+        <!-- PERFIL -->
+        <div class="setting-group">
+
+          <span class="mini">PERFIL</span>
+
+          <label>
+            Nombre
+
+            <input
+              id="nameInput"
+              maxlength="30"
+            >
+          </label>
+
+
+          <label>
+            ¿Cómo quieres que te llame LifeOS?
+
+            <input
+              id="nicknameInput"
+              maxlength="30"
+              placeholder="Ej. Q, Quevedo, jefe..."
+            >
+          </label>
+
+        </div>
+
+
+        <!-- NOTIFICACIONES -->
+        <div class="setting-group">
+
+          <span class="mini">NOTIFICACIONES</span>
+
+
+          <label class="row-setting">
+
+            Recordatorio predeterminado
+
+            <select id="reminderInput">
+
+              <option value="15">
+                15 minutos antes
+              </option>
+
+              <option value="30">
+                30 minutos antes
+              </option>
+
+              <option value="60">
+                1 hora antes
+              </option>
+
+              <option value="90">
+                1 hora 30 min antes
+              </option>
+
+              <option value="120">
+                2 horas antes
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label class="row-setting">
+
+            Resumen de mañana
+
+            <input
+              type="checkbox"
+              id="morningInput"
+            >
+
+          </label>
+
+
+          <label class="row-setting">
+
+            Resumen nocturno
+
+            <input
+              type="checkbox"
+              id="nightInput"
+            >
+
+          </label>
+
+        </div>
+
+
+        <!-- APARIENCIA -->
+        <div class="setting-group">
+
+          <span class="mini">APARIENCIA</span>
+
+
+          <label>
+
+            Tema equipado
+
+            <select id="themeSelect"></select>
+
+          </label>
+
+
+          <label class="row-setting">
+
+            Animaciones
+
+            <input
+              type="checkbox"
+              id="animationsInput"
+              checked
+            >
+
+          </label>
+
+
+          <label class="row-setting">
+
+            Efectos al ganar XP
+
+            <input
+              type="checkbox"
+              id="effectsInput"
+              checked
+            >
+
+          </label>
+
+        </div>
+
+
+        <!-- DATOS -->
+        <div class="setting-group">
+
+          <span class="mini">DATOS</span>
+
+
+          <button
+            class="soft wide"
+            id="notifyBtn"
+          >
+            Activar notificaciones
+          </button>
+
+
+          <button
+            class="danger wide"
+            id="resetBtn"
+          >
+            Borrar todos mis datos
+          </button>
+
+
+          <p
+            id="notifyStatus"
+            class="hint"
+          ></p>
+
+        </div>
+
+
+        <button
+          class="primary wide"
+          id="saveSettings"
+        >
+          Guardar cambios
+        </button>
+
+      </div>
+
     </section>
+
   </main>
 
+
+  <!-- =========================
+       NAVEGACIÓN
+  ========================== -->
   <nav class="nav">
-    <button class="nav-item active" data-screen="homeScreen"><span>⌂</span><small>Inicio</small></button>
-    <button class="nav-item" data-screen="scheduleScreen"><span>▦</span><small>Horario</small></button>
-    <button class="nav-item" data-screen="tasksScreen"><span>✓</span><small>Objetivos</small></button>
-    <button class="nav-item" data-screen="focusScreen"><span>◉</span><small>Enfoque</small></button>
-    <button class="nav-item" data-screen="storeScreen"><span>✦</span><small>Skins</small></button>
+
+    <button
+      class="nav-item active"
+      data-screen="homeScreen"
+    >
+      <span>⌂</span>
+      <small>Inicio</small>
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-screen="scheduleScreen"
+    >
+      <span>▦</span>
+      <small>Horario</small>
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-screen="tasksScreen"
+    >
+      <span>✓</span>
+      <small>Objetivos</small>
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-screen="focusScreen"
+    >
+      <span>◉</span>
+      <small>Enfoque</small>
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-screen="storeScreen"
+    >
+      <span>✦</span>
+      <small>Skins</small>
+    </button>
+
   </nav>
+
 </div>
 
-<div class="modal hidden" id="modal"><div class="modal-box"><div class="modal-top"><h3 id="modalTitle"></h3><button id="closeModal">×</button></div><form id="modalForm"></form></div></div>
-<div class="toast" id="toast"></div>
+
+<!-- =========================
+     MODAL
+========================== -->
+<div
+  class="modal hidden"
+  id="modal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-top">
+
+      <h3 id="modalTitle"></h3>
+
+      <button id="closeModal">
+        ×
+      </button>
+
+    </div>
+
+    <form id="modalForm"></form>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     TOAST
+========================== -->
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<!-- =========================
+     SUPABASE
+========================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =========================
+     LIFEOS
+========================== -->
 <script src="storage.js"></script>
 <script src="xp.js"></script>
 <script src="schedule.js"></script>
 <script src="notifications.js"></script>
 <script src="pdf.js"></script>
 <script src="app.js"></script>
-<script>if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(console.error));</script>
+
+
+<!-- =========================
+     SERVICE WORKER
+========================== -->
+<script>
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener("load", async () => {
+
+    try {
+
+      const registration =
+        await navigator.serviceWorker.register("./sw.js");
+
+      console.log(
+        "LifeOS Service Worker registrado:",
+        registration.scope
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Error registrando Service Worker:",
+        error
+      );
+
+    }
+
+  });
+
+}
+
+</script>
+
 </body>
 </html>
