@@ -1,7 +1,7 @@
 let notifTimer = null;
 
 const VAPID_PUBLIC_KEY =
-  "PEGA_AQUI_TU_VAPID_PUBLIC_KEY";
+  "BIb4lQOoZdclzLLiryHnCCvhNaiSwLtcZSjnGHdADqUsdaNPv0_MkX6nfEjs8Ogo5P_Ya47v3XYDTYeQpb50He0";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
